@@ -1,0 +1,289 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API Superhéroes",
+    "version": "1.0.0",
+    "description": "Documentación de la API para gestión de superhéroes y villanos."
+  },
+  "tags": [
+    { "name": "Heroes", "description": "Operaciones relacionadas con héroes" },
+    { "name": "Villanos", "description": "Operaciones relacionadas con villanos" },
+    { "name": "Enfrentamientos", "description": "Historial de enfrentamientos y resultados" }
+  ],
+  "servers": [
+    {
+      "url": "http://localhost:3001",
+      "description": "Servidor local"
+    }
+  ],
+  "paths": {
+    "/api/heroes": {
+      "get": {
+        "tags": ["Heroes"],
+        "summary": "Obtener todos los héroes",
+        "responses": {
+          "200": {
+            "description": "Lista de héroes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Hero" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Heroes"],
+        "summary": "Agregar un nuevo héroe",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Hero" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Héroe creado" },
+          "400": { "description": "Datos inválidos" }
+        }
+      }
+    },
+    "/api/heroes/{id}": {
+      "put": {
+        "tags": ["Heroes"],
+        "summary": "Actualizar un héroe",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Hero" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Héroe actualizado" },
+          "404": { "description": "Héroe no encontrado" }
+        }
+      },
+      "delete": {
+        "tags": ["Heroes"],
+        "summary": "Eliminar un héroe",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": { "description": "Héroe eliminado" },
+          "404": { "description": "Héroe no encontrado" }
+        }
+      }
+    },
+    "/api/heroes/city/{city}": {
+      "get": {
+        "tags": ["Heroes"],
+        "summary": "Buscar héroes por ciudad",
+        "parameters": [
+          { "name": "city", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de héroes de la ciudad",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Hero" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/heroes/{id}/enfrentar": {
+      "post": {
+        "tags": ["Heroes"],
+        "summary": "Enfrentar a un villano",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "villain": { "type": "string" }
+                },
+                "required": ["villain"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Resultado del enfrentamiento" },
+          "404": { "description": "Héroe no encontrado" }
+        }
+      }
+    },
+    "/api/villanos": {
+      "get": {
+        "tags": ["Villanos"],
+        "summary": "Obtener todos los villanos",
+        "responses": {
+          "200": {
+            "description": "Lista de villanos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Villano" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Villanos"],
+        "summary": "Agregar un nuevo villano",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Villano" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Villano creado" },
+          "400": { "description": "Datos inválidos" }
+        }
+      }
+    },
+    "/api/villanos/{id}": {
+      "put": {
+        "tags": ["Villanos"],
+        "summary": "Actualizar un villano",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Villano" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Villano actualizado" },
+          "404": { "description": "Villano no encontrado" }
+        }
+      },
+      "delete": {
+        "tags": ["Villanos"],
+        "summary": "Eliminar un villano",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": { "description": "Villano eliminado" },
+          "404": { "description": "Villano no encontrado" }
+        }
+      }
+    },
+    "/api/villanos/{id}/enfrentar": {
+      "post": {
+        "tags": ["Villanos"],
+        "summary": "Enfrentar a un héroe",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "hero": { "type": "string" }
+                },
+                "required": ["hero"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Resultado del enfrentamiento" },
+          "400": { "description": "Enfrentamiento inválido" },
+          "404": { "description": "Villano o héroe no encontrado" }
+        }
+      }
+    },
+    "/api/enfrentamientos": {
+      "get": {
+        "tags": ["Enfrentamientos"],
+        "summary": "Obtener historial de enfrentamientos",
+        "description": "Devuelve la lista de todos los enfrentamientos realizados, incluyendo el ganador de cada pelea.",
+        "responses": {
+          "200": {
+            "description": "Lista de enfrentamientos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "fecha": { "type": "string", "format": "date-time" },
+                      "heroe": { "$ref": "#/components/schemas/Hero" },
+                      "villano": { "$ref": "#/components/schemas/Villano" },
+                      "ganador": { "type": "string" },
+                      "perdedor": { "type": "string" },
+                      "iniciadoPor": { "type": "string" },
+                      "retador": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Hero": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "name": { "type": "string" },
+          "alias": { "type": "string" },
+          "city": { "type": "string" },
+          "team": { "type": "string" }
+        },
+        "required": ["name", "alias"]
+      },
+      "Villano": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "name": { "type": "string" },
+          "alias": { "type": "string" },
+          "city": { "type": "string" },
+          "team": { "type": "string" }
+        },
+        "required": ["name", "alias"]
+      }
+    }
+  }
+}
