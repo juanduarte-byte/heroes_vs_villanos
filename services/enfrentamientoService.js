@@ -8,8 +8,13 @@ export async function enfrentarHeroeVillano({ heroeId, villanoId, tipo, retadorN
   const villano = await villanoRepository.getVillanoById(Number(villanoId));
   if (!heroe || !villano) return { error: 'Héroe o villano no encontrado' };
 
-  // Validar que no sea del mismo tipo
-  if (heroeId == villanoId) return { error: 'No se puede enfrentar el mismo personaje.' };
+  // Validar que no sea el mismo personaje (mismo tipo y mismo id)
+  if (
+    (tipo === 'heroe' && heroe.id === villano.id && heroe.name === villano.name && heroe.alias === villano.alias) ||
+    (tipo === 'villano' && heroe.id === villano.id && heroe.name === villano.name && heroe.alias === villano.alias)
+  ) {
+    return { error: 'No se puede enfrentar el mismo personaje.' };
+  }
 
   // Lógica simple: ganador aleatorio
   const ganador = Math.random() < 0.5 ? heroe : villano;
