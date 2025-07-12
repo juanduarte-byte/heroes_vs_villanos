@@ -18,7 +18,7 @@ function parsearIdUnico(idUnico) {
     return { tipo, idNumerico };
 }
 
-export async function crearBatalla(equipoHeroes, equipoVillanos, iniciador = 'heroes') {
+export async function crearBatalla(equipoHeroes, equipoVillanos, iniciador = 'heroes', primerHeroe = null, primerVillano = null) {
     try {
         // Validar que tenemos exactamente 3 héroes y 3 villanos
         if (!equipoHeroes || equipoHeroes.length !== 3) {
@@ -53,12 +53,21 @@ export async function crearBatalla(equipoHeroes, equipoVillanos, iniciador = 'he
             villanosValidados.push(villano);
         }
 
+        // Validar personajes iniciales si se especifican
+        if (primerHeroe && !equipoHeroes.includes(primerHeroe)) {
+            throw new Error(`El héroe inicial ${primerHeroe} no está en el equipo seleccionado`);
+        }
+        
+        if (primerVillano && !equipoVillanos.includes(primerVillano)) {
+            throw new Error(`El villano inicial ${primerVillano} no está en el equipo seleccionado`);
+        }
+
         // Crear equipos
         const equipoHeroesBatalla = new EquipoBatalla(heroesValidados, 'Equipo de Héroes', true);
         const equipoVillanosBatalla = new EquipoBatalla(villanosValidados, 'Equipo de Villanos', false);
 
-        // Crear batalla
-        const batalla = new BatallaEquipo(equipoHeroesBatalla, equipoVillanosBatalla, iniciador);
+        // Crear batalla con personajes iniciales
+        const batalla = new BatallaEquipo(equipoHeroesBatalla, equipoVillanosBatalla, iniciador, primerHeroe, primerVillano);
         
         // Guardar en memoria para batallas activas
         batallasActivas.set(batalla.id, batalla);
@@ -113,6 +122,16 @@ export async function realizarAtaque(batallaId, atacanteId, objetivoId, tipoAtaq
             throw new Error('La batalla no está en curso');
         }
 
+        // Debug: Mostrar estado antes del ataque
+        console.log('DEBUG - Estado antes del ataque:', {
+            batallaId,
+            estado: batalla.estado,
+            turno: batalla.turno,
+            ronda: batalla.ronda,
+            heroesVivos: batalla.equipoHeroes.getPersonajesVivos().length,
+            villanosVivos: batalla.equipoVillanos.getPersonajesVivos().length
+        });
+
         // Parsear IDs únicos para encontrar atacante y objetivo
         let atacante = null;
         let objetivo = null;
@@ -147,13 +166,15 @@ export async function realizarAtaque(batallaId, atacanteId, objetivoId, tipoAtaq
                 id: atacante.id,
                 idUnico: atacante.idUnico,
                 alias: atacante.alias,
-                esHeroe: atacante.esHeroe
+                esHeroe: atacante.esHeroe,
+                vida: atacante.vida
             } : null,
             objetivoEncontrado: objetivo ? {
                 id: objetivo.id,
                 idUnico: objetivo.idUnico,
                 alias: objetivo.alias,
-                esHeroe: objetivo.esHeroe
+                esHeroe: objetivo.esHeroe,
+                vida: objetivo.vida
             } : null
         });
 
@@ -182,14 +203,16 @@ export async function realizarAtaque(batallaId, atacanteId, objetivoId, tipoAtaq
             idUnico: atacante.idUnico,
             alias: atacante.alias,
             esHeroe: atacante.esHeroe,
-            equipo: atacante.esHeroe ? 'héroes' : 'villanos'
+            equipo: atacante.esHeroe ? 'héroes' : 'villanos',
+            vida: atacante.vida
         });
         console.log('DEBUG - Objetivo:', {
             id: objetivo.id,
             idUnico: objetivo.idUnico,
             alias: objetivo.alias,
             esHeroe: objetivo.esHeroe,
-            equipo: objetivo.esHeroe ? 'héroes' : 'villanos'
+            equipo: objetivo.esHeroe ? 'héroes' : 'villanos',
+            vida: objetivo.vida
         });
 
         if (!atacante.estaActivo()) {
@@ -200,34 +223,56 @@ export async function realizarAtaque(batallaId, atacanteId, objetivoId, tipoAtaq
             throw new Error('El objetivo ya está eliminado');
         }
 
-        // Verificar que es el turno correcto
-        const turnoCorrecto = (atacante.esHeroe && batalla.turno === 'heroes') || 
-                             (!atacante.esHeroe && batalla.turno === 'villanos');
-
-        if (!turnoCorrecto) {
-            const equipoActual = batalla.turno === 'heroes' ? 'héroes' : 'villanos';
-            throw new Error(`No es el turno del atacante. Actualmente es el turno de: ${equipoActual}`);
+        // Verificar que el atacante sea del equipo que tiene el turno
+        const equipoAtacante = atacante.esHeroe ? 'heroes' : 'villanos';
+        if (equipoAtacante !== batalla.turno) {
+            const equipoNombre = batalla.turno === 'heroes' ? 'héroes' : 'villanos';
+            throw new Error(`No es el turno del equipo de ${equipoNombre}. Es el turno de ${batalla.turno === 'heroes' ? 'héroes' : 'villanos'}.`);
         }
 
-        // Realizar ataque
-        const resultado = batalla.atacar(atacante, objetivo, tipoAtaque);
+        // Realizar el ataque
+        const resultadoAtaque = batalla.atacar(atacante, objetivo, tipoAtaque);
 
-        // Cambiar turno si la batalla no ha terminado
-        if (batalla.estado === 'en_curso') {
-            batalla.cambiarTurno();
-        }
+        // Debug: Mostrar resultado del ataque
+        console.log('DEBUG - Resultado del ataque:', {
+            dano: resultadoAtaque.dano,
+            vidaRestante: resultadoAtaque.vidaActual,
+            eliminado: resultadoAtaque.eliminado,
+            estadoBatalla: batalla.estado
+        });
 
-        // Si la batalla terminó, guardarla
+        // Cambiar turno después del ataque
+        batalla.cambiarTurno();
+
+        // Debug: Mostrar estado después del cambio de turno
+        console.log('DEBUG - Estado después del cambio de turno:', {
+            estado: batalla.estado,
+            turno: batalla.turno,
+            ronda: batalla.ronda,
+            ganador: batalla.ganador,
+            heroesVivos: batalla.equipoHeroes.getPersonajesVivos().length,
+            villanosVivos: batalla.equipoVillanos.getPersonajesVivos().length
+        });
+
+        // Si la batalla terminó, guardarla en el historial
         if (batalla.estado === 'finalizada') {
+            console.log('DEBUG - Batalla finalizada, guardando en historial');
             await guardarBatalla(batalla);
             batallasActivas.delete(batallaId);
         }
 
         return {
             success: true,
-            resultado,
             batalla: batalla.getEstadoActual(),
-            mensaje: `Ataque realizado: ${atacante.alias} atacó a ${objetivo.alias}`
+            ataque: {
+                atacante: atacante.alias,
+                objetivo: objetivo.alias,
+                tipoAtaque,
+                dano: resultadoAtaque.dano,
+                vidaRestante: resultadoAtaque.vidaActual,
+                eliminado: resultadoAtaque.eliminado
+            },
+            mensaje: `${atacante.alias} atacó a ${objetivo.alias} con ${tipoAtaque} causando ${resultadoAtaque.dano} puntos de daño`
         };
     } catch (error) {
         return {
@@ -241,16 +286,7 @@ export async function obtenerEstadoBatalla(batallaId) {
     try {
         const batalla = batallasActivas.get(batallaId);
         if (!batalla) {
-            // Buscar en batallas guardadas
-            const batallaGuardada = await obtenerBatallaPorId(batallaId);
-            if (batallaGuardada) {
-                return {
-                    success: true,
-                    batalla: batallaGuardada,
-                    mensaje: 'Batalla finalizada'
-                };
-            }
-            throw new Error('Batalla no encontrada');
+            throw new Error('Batalla no encontrada o ya finalizada');
         }
 
         return {
@@ -273,22 +309,28 @@ export async function obtenerBatallasActivas() {
             estado: batalla.estado,
             ronda: batalla.ronda,
             turno: batalla.turno,
+            ganador: batalla.ganador,
+            fecha: batalla.fecha,
             equipoHeroes: {
                 nombre: batalla.equipoHeroes.nombreEquipo,
                 personajes: batalla.equipoHeroes.personajes.map(p => ({
                     id: p.id,
+                    idUnico: p.idUnico,
                     alias: p.alias,
                     vida: p.vida,
-                    activo: p.activo
+                    activo: p.activo,
+                    vivo: p.estaVivo()
                 }))
             },
             equipoVillanos: {
                 nombre: batalla.equipoVillanos.nombreEquipo,
                 personajes: batalla.equipoVillanos.personajes.map(p => ({
                     id: p.id,
+                    idUnico: p.idUnico,
                     alias: p.alias,
                     vida: p.vida,
-                    activo: p.activo
+                    activo: p.activo,
+                    vivo: p.estaVivo()
                 }))
             }
         }));
@@ -296,7 +338,8 @@ export async function obtenerBatallasActivas() {
         return {
             success: true,
             batallas,
-            mensaje: `${batallas.length} batallas activas encontradas`
+            total: batallas.length,
+            mensaje: 'Batallas activas obtenidas'
         };
     } catch (error) {
         return {
@@ -312,7 +355,8 @@ export async function obtenerHistorialBatallas() {
         return {
             success: true,
             batallas,
-            mensaje: `${batallas.length} batallas en el historial`
+            total: batallas.length,
+            mensaje: 'Historial de batallas obtenido'
         };
     } catch (error) {
         return {
@@ -338,27 +382,28 @@ export async function obtenerEstadisticasBatallas() {
     }
 }
 
-export async function simularBatallaCompleta(equipoHeroes, equipoVillanos, iniciador = 'heroes') {
+export async function simularBatallaCompleta(equipoHeroes, equipoVillanos, iniciador = 'heroes', primerHeroe = null, primerVillano = null) {
     try {
         // Crear batalla
-        const resultadoCreacion = await crearBatalla(equipoHeroes, equipoVillanos, iniciador);
+        const resultadoCreacion = await crearBatalla(equipoHeroes, equipoVillanos, iniciador, primerHeroe, primerVillano);
         if (!resultadoCreacion.success) {
-            throw new Error(resultadoCreacion.error);
+            return resultadoCreacion;
         }
 
         const batalla = batallasActivas.get(resultadoCreacion.batalla.id);
-        
-        // Iniciar batalla
         batalla.iniciarBatalla();
 
-        // Simular batalla completa
-        while (batalla.estado === 'en_curso') {
+        // Simular batalla automática
+        let turnos = 0;
+        const maxTurnos = 50; // Límite para evitar bucles infinitos
+
+        while (batalla.estado === 'en_curso' && turnos < maxTurnos) {
             const equipoActual = batalla.turno === 'heroes' ? batalla.equipoHeroes : batalla.equipoVillanos;
-            const equipoObjetivo = batalla.turno === 'heroes' ? batalla.equipoVillanos : batalla.equipoHeroes;
+            const equipoContrario = batalla.turno === 'heroes' ? batalla.equipoVillanos : batalla.equipoHeroes;
             
             const atacante = equipoActual.getPersonajeActual();
-            const objetivo = equipoObjetivo.getPersonajeActual();
-            
+            const objetivo = equipoContrario.getPersonajesVivos()[0];
+
             if (!atacante || !objetivo) {
                 break;
             }
@@ -366,19 +411,21 @@ export async function simularBatallaCompleta(equipoHeroes, equipoVillanos, inici
             // Elegir tipo de ataque aleatorio
             const tiposAtaque = ['basico', 'especial', 'critico'];
             const tipoAtaque = tiposAtaque[Math.floor(Math.random() * tiposAtaque.length)];
-            
+
             batalla.atacar(atacante, objetivo, tipoAtaque);
             batalla.cambiarTurno();
+            turnos++;
         }
 
-        // Guardar batalla
+        // Guardar batalla finalizada
         await guardarBatalla(batalla);
         batallasActivas.delete(batalla.id);
 
         return {
             success: true,
-            batalla: batalla.toJSON(),
-            mensaje: `Batalla simulada completada. Ganador: ${batalla.ganador}`
+            batalla: batalla.getEstadoActual(),
+            turnosSimulados: turnos,
+            mensaje: 'Batalla simulada completada'
         };
     } catch (error) {
         return {
@@ -395,50 +442,10 @@ export async function obtenerInfoBatalla(batallaId) {
             throw new Error('Batalla no encontrada o ya finalizada');
         }
 
-        const heroesActivos = batalla.equipoHeroes.personajes
-            .filter(p => p.estaVivo())
-            .map(p => ({
-                id: p.id,
-                idUnico: p.idUnico,
-                alias: p.alias,
-                vida: p.vida,
-                vidaMaxima: p.vidaMaxima,
-                estaActivo: p.estaActivo()
-            }));
-
-        const villanosActivos = batalla.equipoVillanos.personajes
-            .filter(p => p.estaVivo())
-            .map(p => ({
-                id: p.id,
-                idUnico: p.idUnico,
-                alias: p.alias,
-                vida: p.vida,
-                vidaMaxima: p.vidaMaxima,
-                estaActivo: p.estaActivo()
-            }));
-
-        const turnoActual = batalla.turno;
-        const atacantesValidos = turnoActual === 'heroes' ? heroesActivos : villanosActivos;
-        const objetivosValidos = turnoActual === 'heroes' ? villanosActivos : heroesActivos;
-
         return {
             success: true,
-            info: {
-                estado: batalla.estado,
-                turno: turnoActual,
-                ronda: batalla.ronda,
-                atacantesValidos,
-                objetivosValidos,
-                heroes: heroesActivos,
-                villanos: villanosActivos,
-                debug: {
-                    totalHeroes: batalla.equipoHeroes.personajes.length,
-                    totalVillanos: batalla.equipoVillanos.personajes.length,
-                    heroesVivos: heroesActivos.length,
-                    villanosVivos: villanosActivos.length
-                }
-            },
-            mensaje: 'Información de la batalla obtenida'
+            batalla: batalla.getInfoDetallada(),
+            mensaje: 'Información detallada de batalla obtenida'
         };
     } catch (error) {
         return {
@@ -448,72 +455,37 @@ export async function obtenerInfoBatalla(batallaId) {
     }
 }
 
-// Función de prueba para verificar el guardado y diagnosticar problemas
 export async function probarSistema() {
     try {
-        console.log('=== PRUEBA DEL SISTEMA ===');
-        
-        // 1. Crear una batalla de prueba
-        const resultadoCreacion = await crearBatalla([1, 2, 3], [1, 2, 3], 'villanos');
+        // Crear una batalla de prueba
+        const resultadoCreacion = await crearBatalla([1, 2, 3], [1, 2, 3], 'heroes', 1, 1);
         if (!resultadoCreacion.success) {
-            throw new Error(resultadoCreacion.error);
+            return resultadoCreacion;
         }
-        
-        const batalla = batallasActivas.get(resultadoCreacion.batalla.id);
-        console.log('✅ Batalla creada:', batalla.id);
-        
-        // 2. Verificar que los personajes se cargaron correctamente
-        console.log('📊 Equipo Héroes:');
-        batalla.equipoHeroes.personajes.forEach(p => {
-            console.log(`  - ID: ${p.id}, Alias: ${p.alias}, Es Héroe: ${p.esHeroe}`);
-        });
-        
-        console.log('📊 Equipo Villanos:');
-        batalla.equipoVillanos.personajes.forEach(p => {
-            console.log(`  - ID: ${p.id}, Alias: ${p.alias}, Es Héroe: ${p.esHeroe}`);
-        });
-        
-        // 3. Iniciar batalla
+
+        const batallaId = resultadoCreacion.batalla.id;
+        const batalla = batallasActivas.get(batallaId);
         batalla.iniciarBatalla();
-        console.log('✅ Batalla iniciada');
-        
-        // 4. Simular un ataque para que termine la batalla
-        const atacante = batalla.equipoVillanos.getPersonajeActual();
-        const objetivo = batalla.equipoHeroes.getPersonajeActual();
-        
-        if (atacante && objetivo) {
-            console.log(`⚔️ Simulando ataque: ${atacante.alias} ataca a ${objetivo.alias}`);
-            batalla.atacar(atacante, objetivo, 'critico');
-            batalla.cambiarTurno();
+
+        // Realizar algunos ataques de prueba
+        const ataques = [
+            { atacanteId: 'H1', objetivoId: 'V1', tipoAtaque: 'basico' },
+            { atacanteId: 'V2', objetivoId: 'H2', tipoAtaque: 'especial' },
+            { atacanteId: 'H3', objetivoId: 'V3', tipoAtaque: 'critico' }
+        ];
+
+        for (const ataque of ataques) {
+            if (batalla.estado === 'en_curso') {
+                await realizarAtaque(batallaId, ataque.atacanteId, ataque.objetivoId, ataque.tipoAtaque);
+            }
         }
-        
-        // 5. Forzar finalización de batalla
-        batalla.finalizarBatalla();
-        console.log('✅ Batalla finalizada');
-        
-        // 6. Guardar batalla
-        const guardado = await guardarBatalla(batalla);
-        if (guardado) {
-            console.log('✅ Batalla guardada en archivo JSON');
-        } else {
-            console.log('❌ Error guardando batalla');
-        }
-        
-        // 7. Verificar que se guardó
-        const batallasGuardadas = await obtenerTodasLasBatallas();
-        console.log(`📁 Total de batallas guardadas: ${batallasGuardadas.length}`);
-        
-        // 8. Limpiar de memoria
-        batallasActivas.delete(batalla.id);
-        
+
         return {
             success: true,
-            mensaje: 'Prueba completada exitosamente',
-            batallasGuardadas: batallasGuardadas.length
+            batalla: batalla.getEstadoActual(),
+            mensaje: 'Sistema probado correctamente'
         };
-        
     } catch (error) {
-        console.error('❌ Error en prueba:', error);
         return {
             success: false,
             error: error.message

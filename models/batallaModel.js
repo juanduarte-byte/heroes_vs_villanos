@@ -9,6 +9,8 @@ export class PersonajeBatalla {
         this.vidaMaxima = 200;
         this.activo = true;
         this.orden = 0;
+        // Crear ID único para evitar conflictos
+        this.idUnico = esHeroe ? `H${personaje.id}` : `V${personaje.id}`;
     }
 
     recibirDano(dano) {
@@ -42,15 +44,47 @@ export class EquipoBatalla {
         return this.personajes[this.personajeActual];
     }
 
+    setPersonajeInicial(personajeId) {
+        const index = this.personajes.findIndex(p => p.id === personajeId);
+        if (index !== -1) {
+            this.personajeActual = index;
+            return this.personajes[index];
+        }
+        return null;
+    }
+
     siguientePersonaje() {
+        const personajeActual = this.personajes[this.personajeActual];
+        console.log('DEBUG - Personaje actual antes del cambio:', {
+            indice: this.personajeActual,
+            alias: personajeActual ? personajeActual.alias : 'null',
+            vida: personajeActual ? personajeActual.vida : 'null',
+            activo: personajeActual ? personajeActual.estaActivo() : 'null'
+        });
+        
         this.personajeActual = (this.personajeActual + 1) % this.personajes.length;
         // Buscar el siguiente personaje activo
         let intentos = 0;
         while (!this.personajes[this.personajeActual].estaActivo() && intentos < this.personajes.length) {
+            console.log('DEBUG - Personaje no activo, buscando siguiente:', {
+                indice: this.personajeActual,
+                alias: this.personajes[this.personajeActual].alias,
+                vida: this.personajes[this.personajeActual].vida,
+                activo: this.personajes[this.personajeActual].estaActivo()
+            });
             this.personajeActual = (this.personajeActual + 1) % this.personajes.length;
             intentos++;
         }
-        return this.getPersonajeActual();
+        
+        const siguientePersonaje = this.getPersonajeActual();
+        console.log('DEBUG - Siguiente personaje encontrado:', {
+            indice: this.personajeActual,
+            alias: siguientePersonaje ? siguientePersonaje.alias : 'null',
+            vida: siguientePersonaje ? siguientePersonaje.vida : 'null',
+            activo: siguientePersonaje ? siguientePersonaje.estaActivo() : 'null'
+        });
+        
+        return siguientePersonaje;
     }
 
     tienePersonajesVivos() {
@@ -67,7 +101,7 @@ export class EquipoBatalla {
 }
 
 export class BatallaEquipo {
-    constructor(equipoHeroes, equipoVillanos, iniciador = 'heroes') {
+    constructor(equipoHeroes, equipoVillanos, iniciador = 'heroes', primerHeroe = null, primerVillano = null) {
         this.equipoHeroes = equipoHeroes;
         this.equipoVillanos = equipoVillanos;
         this.iniciador = iniciador; // 'heroes' o 'villanos'
@@ -79,6 +113,14 @@ export class BatallaEquipo {
         this.ganador = null;
         this.fecha = new Date().toISOString();
         this.id = Date.now().toString();
+        
+        // Configurar personajes iniciales si se especifican
+        if (primerHeroe) {
+            this.equipoHeroes.setPersonajeInicial(primerHeroe);
+        }
+        if (primerVillano) {
+            this.equipoVillanos.setPersonajeInicial(primerVillano);
+        }
     }
 
     iniciarBatalla() {
@@ -138,10 +180,40 @@ export class BatallaEquipo {
         if (!objetivo.estaVivo()) {
             this.registrarEvento('eliminacion', `${objetivo.alias} ha sido eliminado`);
             
-            // Verificar si el equipo del objetivo perdió
-            const equipoObjetivo = this.turno === 'heroes' ? this.equipoVillanos : this.equipoHeroes;
+            console.log('DEBUG - Personaje eliminado:', {
+                alias: objetivo.alias,
+                idUnico: objetivo.idUnico,
+                equipo: objetivo.esHeroe ? 'héroes' : 'villanos',
+                vida: objetivo.vida
+            });
+            
+            // Incrementar ronda cuando un personaje muere
+            this.ronda++;
+            console.log('DEBUG - Nueva ronda iniciada por eliminación:', this.ronda);
+            this.registrarEvento('nueva_ronda', `Inicia la ronda ${this.ronda} - ${objetivo.alias} eliminado`);
+            
+            // Verificar si el equipo del objetivo perdió (todos sus personajes eliminados)
+            const equipoObjetivo = objetivo.esHeroe ? this.equipoHeroes : this.equipoVillanos;
+            const personajesVivosEquipoObjetivo = equipoObjetivo.getPersonajesVivos();
+            
+            console.log('DEBUG - Verificación de equipo objetivo:', {
+                equipo: objetivo.esHeroe ? 'héroes' : 'villanos',
+                personajesVivos: personajesVivosEquipoObjetivo.length,
+                personajesVivosDetalle: personajesVivosEquipoObjetivo.map(p => ({
+                    alias: p.alias,
+                    idUnico: p.idUnico,
+                    vida: p.vida
+                }))
+            });
+            
             if (!equipoObjetivo.tienePersonajesVivos()) {
+                console.log('DEBUG - Todo el equipo objetivo eliminado, finalizando batalla');
                 this.finalizarBatalla();
+            } else if (this.ronda > this.maxRondas) {
+                console.log('DEBUG - Máximo de rondas alcanzado, finalizando batalla');
+                this.finalizarBatalla();
+            } else {
+                console.log('DEBUG - Equipo objetivo aún tiene personajes vivos, continuando batalla');
             }
         }
 
@@ -152,9 +224,22 @@ export class BatallaEquipo {
         // Cambiar turno
         this.turno = this.turno === 'heroes' ? 'villanos' : 'heroes';
         
-        // Verificar si el equipo actual tiene personajes vivos
+        // Obtener el equipo actual después del cambio de turno
         const equipoActual = this.turno === 'heroes' ? this.equipoHeroes : this.equipoVillanos;
-        if (!equipoActual.tienePersonajesVivos()) {
+        const equipoContrario = this.turno === 'heroes' ? this.equipoVillanos : this.equipoHeroes;
+        
+        // Debug: Mostrar información de equipos
+        console.log('DEBUG - Cambio de turno:', {
+            turnoAnterior: this.turno === 'heroes' ? 'villanos' : 'heroes',
+            turnoActual: this.turno,
+            equipoActual: this.turno,
+            personajesActualesVivos: equipoActual.getPersonajesVivos().length,
+            personajesContrariosVivos: equipoContrario.getPersonajesVivos().length
+        });
+        
+        // Verificar si el equipo contrario tiene personajes vivos
+        if (!equipoContrario.tienePersonajesVivos()) {
+            console.log('DEBUG - Equipo contrario eliminado, finalizando batalla');
             this.finalizarBatalla();
             return;
         }
@@ -162,24 +247,20 @@ export class BatallaEquipo {
         // Cambiar al siguiente personaje del equipo actual
         const siguientePersonaje = equipoActual.siguientePersonaje();
         if (!siguientePersonaje) {
+            console.log('DEBUG - No hay personajes activos en el equipo actual, finalizando batalla');
             this.finalizarBatalla();
             return;
-        }
-
-        // Verificar si terminó la ronda (cuando volvemos al iniciador)
-        if (this.turno === this.iniciador) {
-            this.ronda++;
-            if (this.ronda > this.maxRondas) {
-                this.finalizarBatalla();
-                return;
-            }
-            this.registrarEvento('nueva_ronda', `Inicia la ronda ${this.ronda}`);
         }
 
         // Registrar el cambio de turno
         const equipoNombre = this.turno === 'heroes' ? 'Héroes' : 'Villanos';
         const personajeActual = equipoActual.getPersonajeActual();
         if (personajeActual) {
+            console.log('DEBUG - Personaje actual del turno:', {
+                alias: personajeActual.alias,
+                idUnico: personajeActual.idUnico,
+                vida: personajeActual.vida
+            });
             this.registrarEvento('cambio_turno', `Turno de ${equipoNombre}: ${personajeActual.alias}`);
         }
     }
@@ -187,9 +268,16 @@ export class BatallaEquipo {
     finalizarBatalla() {
         this.estado = 'finalizada';
         
-        // Determinar ganador
+        // Determinar ganador basado en qué equipo tiene personajes vivos o por rondas
         const heroesVivos = this.equipoHeroes.tienePersonajesVivos();
         const villanosVivos = this.equipoVillanos.tienePersonajesVivos();
+        
+        console.log('DEBUG - Finalizando batalla:', {
+            heroesVivos,
+            villanosVivos,
+            ronda: this.ronda,
+            maxRondas: this.maxRondas
+        });
         
         if (!heroesVivos && !villanosVivos) {
             this.ganador = 'empate';
@@ -197,10 +285,32 @@ export class BatallaEquipo {
             this.ganador = 'villanos';
         } else if (!villanosVivos) {
             this.ganador = 'heroes';
-        } else {
-            // Si llegamos al límite de rondas, ganador por puntos de vida
+        } else if (this.ronda > this.maxRondas) {
+            // Si se alcanzó el máximo de rondas, ganador por puntos de vida total
             const vidaHeroes = this.equipoHeroes.personajes.reduce((total, p) => total + p.vida, 0);
             const vidaVillanos = this.equipoVillanos.personajes.reduce((total, p) => total + p.vida, 0);
+            
+            console.log('DEBUG - Comparando vida total por rondas máximas:', {
+                vidaHeroes,
+                vidaVillanos
+            });
+            
+            if (vidaHeroes > vidaVillanos) {
+                this.ganador = 'heroes';
+            } else if (vidaVillanos > vidaHeroes) {
+                this.ganador = 'villanos';
+            } else {
+                this.ganador = 'empate';
+            }
+        } else {
+            // Si ambos equipos tienen personajes vivos, determinar por puntos de vida total
+            const vidaHeroes = this.equipoHeroes.personajes.reduce((total, p) => total + p.vida, 0);
+            const vidaVillanos = this.equipoVillanos.personajes.reduce((total, p) => total + p.vida, 0);
+            
+            console.log('DEBUG - Comparando vida total:', {
+                vidaHeroes,
+                vidaVillanos
+            });
             
             if (vidaHeroes > vidaVillanos) {
                 this.ganador = 'heroes';
@@ -226,6 +336,7 @@ export class BatallaEquipo {
             ganador: this.ganador,
             personajeActual: personajeActual ? {
                 id: personajeActual.id,
+                idUnico: personajeActual.idUnico,
                 alias: personajeActual.alias,
                 equipo: this.turno
             } : null,
@@ -233,6 +344,7 @@ export class BatallaEquipo {
                 nombre: this.equipoHeroes.nombreEquipo,
                 personajes: this.equipoHeroes.personajes.map(p => ({
                     id: p.id,
+                    idUnico: p.idUnico,
                     alias: p.alias,
                     vida: p.vida,
                     activo: p.activo,
@@ -243,44 +355,90 @@ export class BatallaEquipo {
                 nombre: this.equipoVillanos.nombreEquipo,
                 personajes: this.equipoVillanos.personajes.map(p => ({
                     id: p.id,
+                    idUnico: p.idUnico,
                     alias: p.alias,
                     vida: p.vida,
                     activo: p.activo,
                     vivo: p.estaVivo()
                 }))
             },
-            historial: this.historial.slice(-10) // Últimos 10 eventos
+            historial: this.historial
+        };
+    }
+
+    getInfoDetallada() {
+        const equipoActual = this.turno === 'heroes' ? this.equipoHeroes : this.equipoVillanos;
+        const personajeActual = equipoActual.getPersonajeActual();
+        
+        // Obtener personajes que pueden atacar (del equipo actual)
+        const personajesAtacantes = equipoActual.getPersonajesActivos().map(p => ({
+            id: p.id,
+            idUnico: p.idUnico,
+            alias: p.alias,
+            vida: p.vida,
+            equipo: this.turno
+        }));
+
+        // Obtener personajes que pueden ser atacados (del equipo contrario)
+        const equipoContrario = this.turno === 'heroes' ? this.equipoVillanos : this.equipoHeroes;
+        const personajesObjetivo = equipoContrario.getPersonajesVivos().map(p => ({
+            id: p.id,
+            idUnico: p.idUnico,
+            alias: p.alias,
+            vida: p.vida,
+            equipo: this.turno === 'heroes' ? 'villanos' : 'heroes'
+        }));
+
+        return {
+            id: this.id,
+            estado: this.estado,
+            ronda: this.ronda,
+            turno: this.turno,
+            ganador: this.ganador,
+            personajeActual: personajeActual ? {
+                id: personajeActual.id,
+                idUnico: personajeActual.idUnico,
+                alias: personajeActual.alias,
+                equipo: this.turno
+            } : null,
+            personajesAtacantes,
+            personajesObjetivo,
+            equipoHeroes: {
+                nombre: this.equipoHeroes.nombreEquipo,
+                personajes: this.equipoHeroes.personajes.map(p => ({
+                    id: p.id,
+                    idUnico: p.idUnico,
+                    alias: p.alias,
+                    vida: p.vida,
+                    activo: p.activo,
+                    vivo: p.estaVivo()
+                }))
+            },
+            equipoVillanos: {
+                nombre: this.equipoVillanos.nombreEquipo,
+                personajes: this.equipoVillanos.personajes.map(p => ({
+                    id: p.id,
+                    idUnico: p.idUnico,
+                    alias: p.alias,
+                    vida: p.vida,
+                    activo: p.activo,
+                    vivo: p.estaVivo()
+                }))
+            }
         };
     }
 
     toJSON() {
         return {
             id: this.id,
-            fecha: this.fecha,
             estado: this.estado,
-            ganador: this.ganador,
             ronda: this.ronda,
-            maxRondas: this.maxRondas,
-            iniciador: this.iniciador,
-            equipoHeroes: {
-                nombre: this.equipoHeroes.nombreEquipo,
-                personajes: this.equipoHeroes.personajes.map(p => ({
-                    id: p.id,
-                    alias: p.alias,
-                    vidaFinal: p.vida,
-                    eliminado: !p.estaVivo()
-                }))
-            },
-            equipoVillanos: {
-                nombre: this.equipoVillanos.nombreEquipo,
-                personajes: this.equipoVillanos.personajes.map(p => ({
-                    id: p.id,
-                    alias: p.alias,
-                    vidaFinal: p.vida,
-                    eliminado: !p.estaVivo()
-                }))
-            },
-            historial: this.historial
+            turno: this.turno,
+            ganador: this.ganador,
+            fecha: this.fecha,
+            historial: this.historial,
+            equipoHeroes: this.equipoHeroes,
+            equipoVillanos: this.equipoVillanos
         };
     }
 } 

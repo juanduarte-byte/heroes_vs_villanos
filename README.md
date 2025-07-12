@@ -1,12 +1,13 @@
-# API de Superhéroes - Sistema de Batallas
+# API de Superhéroes - Sistema de Batallas por Equipos
 
-API para gestionar batallas entre equipos de héroes y villanos con sistema de turnos por rondas.
+API para gestionar batallas entre equipos de héroes y villanos con sistema de turnos por rondas y selección de personajes iniciales.
 
 ## 🚀 Características
 
 - **Sistema de Batallas por Equipos**: 3 héroes vs 3 villanos
 - **Sistema de Turnos**: Turnos alternados entre equipos
-- **Tipos de Ataque**: Básico, Especial y Crítico
+- **Selección de Personajes Iniciales**: El usuario puede elegir qué héroe y villano empiezan la batalla
+- **Tipos de Ataque**: Básico (5), Especial (30) y Crítico (45) puntos de daño
 - **Vida de Personajes**: 200 puntos de vida por personaje
 - **IDs Únicos**: Sistema para evitar conflictos entre héroes y villanos
 - **Persistencia**: Guardado automático de batallas finalizadas
@@ -19,12 +20,12 @@ npm install
 npm start
 ```
 
-El servidor se ejecutará en `http://localhost:3000`
+El servidor se ejecutará en `http://localhost:3001`
 
 ## 📚 Documentación API
 
 La documentación completa está disponible en Swagger UI:
-`http://localhost:3000/api-docs`
+`http://localhost:3001/api-docs`
 
 ## 🎯 Sistema de IDs Únicos
 
@@ -48,9 +49,15 @@ POST /api/batallas/crear
 {
   "equipoHeroes": [1, 2, 3],
   "equipoVillanos": [1, 2, 3],
-  "iniciador": "heroes"
+  "iniciador": "heroes",
+  "primerHeroe": 1,
+  "primerVillano": 2
 }
 ```
+
+**Parámetros opcionales:**
+- `primerHeroe`: ID del héroe que iniciará la batalla (debe estar en equipoHeroes)
+- `primerVillano`: ID del villano que iniciará la batalla (debe estar en equipoVillanos)
 
 ### 2. Obtener Información de la Batalla
 
@@ -83,7 +90,7 @@ POST /api/batallas/{batallaId}/atacar
 
 ## 🔍 Flujo Recomendado
 
-1. **Crear batalla** con equipos de héroes y villanos
+1. **Crear batalla** con equipos de héroes y villanos (opcionalmente especificar personajes iniciales)
 2. **Obtener información** (`/info`) para ver los IDs únicos
 3. **Iniciar batalla**
 4. **Realizar ataques** usando los IDs únicos mostrados en `/info`
@@ -106,9 +113,9 @@ POST /api/batallas/{batallaId}/atacar
 
 ## 🎲 Tipos de Ataque
 
-- **Básico**: Daño moderado, alta precisión
-- **Especial**: Daño alto, precisión media
-- **Crítico**: Daño máximo, baja precisión
+- **Básico**: 5 puntos de daño, alta precisión
+- **Especial**: 30 puntos de daño, precisión media
+- **Crítico**: 45 puntos de daño, baja precisión
 
 ## ⚠️ Errores Comunes
 
@@ -121,29 +128,43 @@ POST /api/batallas/{batallaId}/atacar
 ### Error: "Solo puedes atacar a personajes del equipo contrario"
 **Solución**: Asegúrate de que el atacante y objetivo sean de equipos diferentes.
 
+### Error: "El héroe inicial X no está en el equipo seleccionado"
+**Solución**: Asegúrate de que el `primerHeroe` esté incluido en `equipoHeroes`.
+
 ## 🔧 Ejemplo Completo
 
 ```bash
-# 1. Crear batalla
-curl -X POST http://localhost:3000/api/batallas/crear \
+# 1. Crear batalla con personajes iniciales
+curl -X POST http://localhost:3001/api/batallas/crear \
   -H "Content-Type: application/json" \
-  -d '{"equipoHeroes": [1,2,3], "equipoVillanos": [1,2,3]}'
+  -d '{
+    "equipoHeroes": [1,2,3], 
+    "equipoVillanos": [1,2,3],
+    "iniciador": "heroes",
+    "primerHeroe": 1,
+    "primerVillano": 2
+  }'
 
 # 2. Obtener información (IMPORTANTE)
-curl http://localhost:3000/api/batallas/BATALLA_ID/info
+curl http://localhost:3001/api/batallas/BATALLA_ID/info
 
 # 3. Iniciar batalla
-curl -X POST http://localhost:3000/api/batallas/BATALLA_ID/iniciar
+curl -X POST http://localhost:3001/api/batallas/BATALLA_ID/iniciar
 
 # 4. Atacar usando IDs únicos
-curl -X POST http://localhost:3000/api/batallas/BATALLA_ID/atacar \
+curl -X POST http://localhost:3001/api/batallas/BATALLA_ID/atacar \
   -H "Content-Type: application/json" \
-  -d '{"atacanteId": "H1", "objetivoId": "V2", "tipoAtaque": "basico"}'
+  -d '{
+    "atacanteId": "H1", 
+    "objetivoId": "V2", 
+    "tipoAtaque": "basico"
+  }'
 ```
 
 ## 📈 Características del Sistema
 
 - **Turnos Alternados**: Los equipos atacan por turnos
+- **Selección de Inicio**: Puedes elegir qué personaje de cada equipo inicia
 - **Validación de Equipos**: Solo puedes atacar al equipo contrario
 - **Sistema de Vida**: 200 puntos por personaje
 - **Eliminación**: Personajes eliminados no pueden atacar
@@ -178,6 +199,7 @@ api-superheroes/
 3. **Las batallas se guardan** automáticamente cuando terminan
 4. **El sistema valida** que no ataques a tu propio equipo
 5. **Los turnos alternan** automáticamente después de cada ataque
+6. **Puedes especificar** qué personaje de cada equipo inicia la batalla
 
 ## 🎯 Próximas Mejoras
 

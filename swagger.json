@@ -1,14 +1,15 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "API Superhéroes",
-    "version": "1.0.0",
-    "description": "Documentación de la API para gestión de superhéroes y villanos."
+    "title": "API Superhéroes - Sistema de Batallas por Equipos",
+    "version": "2.0.0",
+    "description": "API para gestión de superhéroes, villanos y batallas por equipos con sistema de turnos y IDs únicos."
   },
   "tags": [
     { "name": "Heroes", "description": "Operaciones relacionadas con héroes" },
     { "name": "Villanos", "description": "Operaciones relacionadas con villanos" },
-    { "name": "Enfrentamientos", "description": "Historial de enfrentamientos y resultados" }
+    { "name": "Batallas", "description": "Sistema de batallas por equipos con turnos" },
+    { "name": "Enfrentamientos", "description": "Historial de enfrentamientos individuales" }
   ],
   "servers": [
     {
@@ -228,6 +229,341 @@
         }
       }
     },
+    "/api/batallas/crear": {
+      "post": {
+        "tags": ["Batallas"],
+        "summary": "Crear una nueva batalla por equipos",
+        "description": "Crea una batalla entre 3 héroes y 3 villanos con sistema de turnos y IDs únicos",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "equipoHeroes": {
+                    "type": "array",
+                    "items": { "type": "integer" },
+                    "minItems": 3,
+                    "maxItems": 3,
+                    "description": "IDs de los 3 héroes que participarán"
+                  },
+                  "equipoVillanos": {
+                    "type": "array",
+                    "items": { "type": "integer" },
+                    "minItems": 3,
+                    "maxItems": 3,
+                    "description": "IDs de los 3 villanos que participarán"
+                  },
+                  "iniciador": {
+                    "type": "string",
+                    "enum": ["heroes", "villanos"],
+                    "default": "heroes",
+                    "description": "Equipo que iniciará la batalla"
+                  },
+                  "primerHeroe": {
+                    "type": "integer",
+                    "description": "ID del héroe que iniciará la batalla (debe estar en equipoHeroes)"
+                  },
+                  "primerVillano": {
+                    "type": "integer",
+                    "description": "ID del villano que iniciará la batalla (debe estar en equipoVillanos)"
+                  }
+                },
+                "required": ["equipoHeroes", "equipoVillanos"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Batalla creada exitosamente",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/BatallaResponse" }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos inválidos",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/batallas/{batallaId}/iniciar": {
+      "post": {
+        "tags": ["Batallas"],
+        "summary": "Iniciar una batalla",
+        "description": "Cambia el estado de la batalla de 'iniciando' a 'en_curso'",
+        "parameters": [
+          { "name": "batallaId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Batalla iniciada",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/BatallaResponse" }
+              }
+            }
+          },
+          "400": {
+            "description": "Error al iniciar batalla",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/batallas/{batallaId}/atacar": {
+      "post": {
+        "tags": ["Batallas"],
+        "summary": "Realizar un ataque",
+        "description": "Realiza un ataque usando IDs únicos (H1, V2, etc.)",
+        "parameters": [
+          { "name": "batallaId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "atacanteId": {
+                    "type": "string",
+                    "description": "ID único del atacante (ej: H1, V2)",
+                    "example": "H1"
+                  },
+                  "objetivoId": {
+                    "type": "string",
+                    "description": "ID único del objetivo (ej: V1, H2)",
+                    "example": "V2"
+                  },
+                  "tipoAtaque": {
+                    "type": "string",
+                    "enum": ["basico", "especial", "critico"],
+                    "description": "Tipo de ataque a realizar"
+                  }
+                },
+                "required": ["atacanteId", "objetivoId", "tipoAtaque"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ataque realizado exitosamente",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AtaqueResponse" }
+              }
+            }
+          },
+          "400": {
+            "description": "Error en el ataque",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/batallas/{batallaId}/info": {
+      "get": {
+        "tags": ["Batallas"],
+        "summary": "Obtener información detallada de batalla",
+        "description": "Obtiene información detallada incluyendo IDs únicos, personajes atacantes y objetivos",
+        "parameters": [
+          { "name": "batallaId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Información detallada de la batalla",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/BatallaInfoResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "Batalla no encontrada",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/batallas/{batallaId}/estado": {
+      "get": {
+        "tags": ["Batallas"],
+        "summary": "Obtener estado de batalla",
+        "description": "Obtiene el estado actual de la batalla",
+        "parameters": [
+          { "name": "batallaId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Estado de la batalla",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/BatallaResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "Batalla no encontrada",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/batallas/activas": {
+      "get": {
+        "tags": ["Batallas"],
+        "summary": "Obtener batallas activas",
+        "description": "Lista todas las batallas que están en curso",
+        "responses": {
+          "200": {
+            "description": "Lista de batallas activas",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/BatallasActivasResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/batallas/historial": {
+      "get": {
+        "tags": ["Batallas"],
+        "summary": "Obtener historial de batallas",
+        "description": "Lista todas las batallas finalizadas",
+        "responses": {
+          "200": {
+            "description": "Historial de batallas",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HistorialResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/batallas/estadisticas": {
+      "get": {
+        "tags": ["Batallas"],
+        "summary": "Obtener estadísticas de batallas",
+        "description": "Obtiene estadísticas generales de todas las batallas",
+        "responses": {
+          "200": {
+            "description": "Estadísticas de batallas",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/EstadisticasResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/batallas/simular": {
+      "post": {
+        "tags": ["Batallas"],
+        "summary": "Simular batalla completa",
+        "description": "Crea y simula una batalla completa automáticamente",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "equipoHeroes": {
+                    "type": "array",
+                    "items": { "type": "integer" },
+                    "minItems": 3,
+                    "maxItems": 3
+                  },
+                  "equipoVillanos": {
+                    "type": "array",
+                    "items": { "type": "integer" },
+                    "minItems": 3,
+                    "maxItems": 3
+                  },
+                  "iniciador": {
+                    "type": "string",
+                    "enum": ["heroes", "villanos"],
+                    "default": "heroes"
+                  },
+                  "primerHeroe": {
+                    "type": "integer"
+                  },
+                  "primerVillano": {
+                    "type": "integer"
+                  }
+                },
+                "required": ["equipoHeroes", "equipoVillanos"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Batalla simulada completada",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SimulacionResponse" }
+              }
+            }
+          },
+          "400": {
+            "description": "Error en la simulación",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/batallas/probar": {
+      "post": {
+        "tags": ["Batallas"],
+        "summary": "Probar sistema",
+        "description": "Ejecuta pruebas automáticas del sistema",
+        "responses": {
+          "200": {
+            "description": "Pruebas completadas",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PruebaResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/enfrentamientos": {
       "get": {
         "tags": ["Enfrentamientos"],
@@ -283,6 +619,211 @@
           "team": { "type": "string" }
         },
         "required": ["name", "alias"]
+      },
+      "PersonajeBatalla": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "idUnico": { "type": "string" },
+          "alias": { "type": "string" },
+          "vida": { "type": "integer" },
+          "activo": { "type": "boolean" },
+          "vivo": { "type": "boolean" }
+        }
+      },
+      "EquipoBatalla": {
+        "type": "object",
+        "properties": {
+          "nombre": { "type": "string" },
+          "personajes": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/PersonajeBatalla" }
+          }
+        }
+      },
+      "BatallaResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "batalla": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "estado": { "type": "string", "enum": ["iniciando", "en_curso", "finalizada"] },
+              "ronda": { "type": "integer" },
+              "turno": { "type": "string", "enum": ["heroes", "villanos"] },
+              "ganador": { "type": "string", "nullable": true },
+              "personajeActual": {
+                "type": "object",
+                "properties": {
+                  "id": { "type": "integer" },
+                  "idUnico": { "type": "string" },
+                  "alias": { "type": "string" },
+                  "equipo": { "type": "string" }
+                }
+              },
+              "equipoHeroes": { "$ref": "#/components/schemas/EquipoBatalla" },
+              "equipoVillanos": { "$ref": "#/components/schemas/EquipoBatalla" },
+              "historial": {
+                "type": "array",
+                "items": { "type": "object" }
+              }
+            }
+          },
+          "mensaje": { "type": "string" }
+        }
+      },
+      "BatallaInfoResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "batalla": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "estado": { "type": "string" },
+              "ronda": { "type": "integer" },
+              "turno": { "type": "string" },
+              "ganador": { "type": "string", "nullable": true },
+              "personajeActual": {
+                "type": "object",
+                "properties": {
+                  "id": { "type": "integer" },
+                  "idUnico": { "type": "string" },
+                  "alias": { "type": "string" },
+                  "equipo": { "type": "string" }
+                }
+              },
+              "personajesAtacantes": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "integer" },
+                    "idUnico": { "type": "string" },
+                    "alias": { "type": "string" },
+                    "vida": { "type": "integer" },
+                    "equipo": { "type": "string" }
+                  }
+                }
+              },
+              "personajesObjetivo": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "integer" },
+                    "idUnico": { "type": "string" },
+                    "alias": { "type": "string" },
+                    "vida": { "type": "integer" },
+                    "equipo": { "type": "string" }
+                  }
+                }
+              },
+              "equipoHeroes": { "$ref": "#/components/schemas/EquipoBatalla" },
+              "equipoVillanos": { "$ref": "#/components/schemas/EquipoBatalla" }
+            }
+          },
+          "mensaje": { "type": "string" }
+        }
+      },
+      "AtaqueResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "batalla": { "$ref": "#/components/schemas/BatallaResponse" },
+          "ataque": {
+            "type": "object",
+            "properties": {
+              "atacante": { "type": "string" },
+              "objetivo": { "type": "string" },
+              "tipoAtaque": { "type": "string" },
+              "dano": { "type": "integer" },
+              "vidaRestante": { "type": "integer" },
+              "eliminado": { "type": "boolean" }
+            }
+          },
+          "mensaje": { "type": "string" }
+        }
+      },
+      "BatallasActivasResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "batallas": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": { "type": "string" },
+                "estado": { "type": "string" },
+                "ronda": { "type": "integer" },
+                "turno": { "type": "string" },
+                "ganador": { "type": "string", "nullable": true },
+                "fecha": { "type": "string" },
+                "equipoHeroes": { "$ref": "#/components/schemas/EquipoBatalla" },
+                "equipoVillanos": { "$ref": "#/components/schemas/EquipoBatalla" }
+              }
+            }
+          },
+          "total": { "type": "integer" },
+          "mensaje": { "type": "string" }
+        }
+      },
+      "HistorialResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "batallas": {
+            "type": "array",
+            "items": { "type": "object" }
+          },
+          "total": { "type": "integer" },
+          "mensaje": { "type": "string" }
+        }
+      },
+      "EstadisticasResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "estadisticas": {
+            "type": "object",
+            "properties": {
+              "totalBatallas": { "type": "integer" },
+              "batallasFinalizadas": { "type": "integer" },
+              "victoriasHeroes": { "type": "integer" },
+              "victoriasVillanos": { "type": "integer" },
+              "empates": { "type": "integer" },
+              "porcentajeVictoriasHeroes": { "type": "string" },
+              "porcentajeVictoriasVillanos": { "type": "string" }
+            }
+          },
+          "mensaje": { "type": "string" }
+        }
+      },
+      "SimulacionResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "batalla": { "$ref": "#/components/schemas/BatallaResponse" },
+          "turnosSimulados": { "type": "integer" },
+          "mensaje": { "type": "string" }
+        }
+      },
+      "PruebaResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "batalla": { "$ref": "#/components/schemas/BatallaResponse" },
+          "mensaje": { "type": "string" }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "error": { "type": "string" }
+        }
       }
     }
   }

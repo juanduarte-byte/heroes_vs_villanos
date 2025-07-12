@@ -17,7 +17,7 @@ const router = express.Router();
 // Crear una nueva batalla
 router.post('/crear', async (req, res) => {
     try {
-        const { equipoHeroes, equipoVillanos, iniciador = 'heroes' } = req.body;
+        const { equipoHeroes, equipoVillanos, iniciador = 'heroes', primerHeroe = null, primerVillano = null } = req.body;
         
         if (!equipoHeroes || !equipoVillanos) {
             return res.status(400).json({
@@ -26,7 +26,7 @@ router.post('/crear', async (req, res) => {
             });
         }
 
-        const resultado = await crearBatalla(equipoHeroes, equipoVillanos, iniciador);
+        const resultado = await crearBatalla(equipoHeroes, equipoVillanos, iniciador, primerHeroe, primerVillano);
         
         if (resultado.success) {
             res.status(201).json(resultado);
@@ -168,7 +168,7 @@ router.get('/estadisticas', async (req, res) => {
 // Simular una batalla completa (para pruebas)
 router.post('/simular', async (req, res) => {
     try {
-        const { equipoHeroes, equipoVillanos, iniciador = 'heroes' } = req.body;
+        const { equipoHeroes, equipoVillanos, iniciador = 'heroes', primerHeroe = null, primerVillano = null } = req.body;
         
         if (!equipoHeroes || !equipoVillanos) {
             return res.status(400).json({
@@ -177,7 +177,7 @@ router.post('/simular', async (req, res) => {
             });
         }
 
-        const resultado = await simularBatallaCompleta(equipoHeroes, equipoVillanos, iniciador);
+        const resultado = await simularBatallaCompleta(equipoHeroes, equipoVillanos, iniciador, primerHeroe, primerVillano);
         res.json(resultado);
     } catch (error) {
         res.status(500).json({
