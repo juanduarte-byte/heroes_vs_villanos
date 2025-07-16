@@ -1,3 +1,52 @@
+export async function activarSuperAtaque(batallaId, personajeId) {
+    try {
+        const batalla = batallasActivas.get(batallaId);
+        if (!batalla) {
+            throw new Error('Batalla no encontrada o ya finalizada');
+        }
+        let personaje = null;
+        if (personajeId.startsWith('H')) {
+            personaje = batalla.equipoHeroes.personajes.find(p => p.idUnico === personajeId);
+        } else if (personajeId.startsWith('V')) {
+            personaje = batalla.equipoVillanos.personajes.find(p => p.idUnico === personajeId);
+        }
+        if (!personaje) {
+            throw new Error('Personaje no encontrado en la batalla');
+        }
+        if (!personaje.puedeUsarSuperAtaque()) {
+            throw new Error('La barra de poder no está llena');
+        }
+        personaje.activarSuperAtaque();
+        return { success: true, mensaje: 'Superataque activado para ' + personaje.alias, personaje };
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+}
+
+export async function activarSuperDefensa(batallaId, personajeId) {
+    try {
+        const batalla = batallasActivas.get(batallaId);
+        if (!batalla) {
+            throw new Error('Batalla no encontrada o ya finalizada');
+        }
+        let personaje = null;
+        if (personajeId.startsWith('H')) {
+            personaje = batalla.equipoHeroes.personajes.find(p => p.idUnico === personajeId);
+        } else if (personajeId.startsWith('V')) {
+            personaje = batalla.equipoVillanos.personajes.find(p => p.idUnico === personajeId);
+        }
+        if (!personaje) {
+            throw new Error('Personaje no encontrado en la batalla');
+        }
+        if (!personaje.puedeUsarSuperDefensa()) {
+            throw new Error('La barra de defensa no está llena');
+        }
+        personaje.activarSuperDefensa();
+        return { success: true, mensaje: 'Superdefensa activada para ' + personaje.alias, personaje };
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+}
 import { BatallaEquipo, EquipoBatalla } from '../models/batallaModel.js';
 import { guardarBatalla, obtenerTodasLasBatallas, obtenerBatallaPorId, obtenerEstadisticas } from '../repositories/batallaRepository.js';
 import heroRepository from '../repositories/heroRepository.js';

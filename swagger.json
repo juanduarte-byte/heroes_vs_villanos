@@ -18,6 +18,63 @@
     }
   ],
   "paths": {
+
+    "/api/batallas/{batallaId}/activar-superataque": {
+      "post": {
+        "tags": ["Batallas"],
+        "summary": "Activar superataque para un personaje",
+        "description": "Activa el superataque de un personaje si su barra de poder está llena (100). El siguiente ataque de este personaje hará el doble de daño.",
+        "parameters": [
+          { "name": "batallaId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "personajeId": { "type": "string", "description": "ID único del personaje (ej: H1, V2)", "example": "H1" }
+                },
+                "required": ["personajeId"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Superataque activado", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/BatallaResponse" } } } },
+          "400": { "description": "Error al activar superataque", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+        }
+      }
+    },
+    "/api/batallas/{batallaId}/activar-superdefensa": {
+      "post": {
+        "tags": ["Batallas"],
+        "summary": "Activar superdefensa para un personaje",
+        "description": "Activa la superdefensa de un personaje si su barra de defensa está llena (100). El siguiente golpe recibido por este personaje le hará la mitad de daño.",
+        "parameters": [
+          { "name": "batallaId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "personajeId": { "type": "string", "description": "ID único del personaje (ej: H1, V2)", "example": "H1" }
+                },
+                "required": ["personajeId"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Superdefensa activada", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/BatallaResponse" } } } },
+          "400": { "description": "Error al activar superdefensa", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+        }
+      }
+    },
     "/api/heroes": {
       "get": {
         "tags": ["Heroes"],

@@ -1,3 +1,4 @@
+
 import express from 'express';
 import { 
     crearBatalla, 
@@ -9,10 +10,50 @@ import {
     obtenerEstadisticasBatallas,
     simularBatallaCompleta,
     probarSistema,
-    obtenerInfoBatalla
+    obtenerInfoBatalla,
+    activarSuperAtaque,
+    activarSuperDefensa
 } from '../services/batallaService.js';
 
 const router = express.Router();
+
+// Activar superataque
+router.post('/:batallaId/activar-superataque', async (req, res) => {
+    try {
+        const { batallaId } = req.params;
+        const { personajeId } = req.body;
+        if (!personajeId) {
+            return res.status(400).json({ success: false, error: 'Se requiere personajeId' });
+        }
+        const resultado = await activarSuperAtaque(batallaId, personajeId);
+        if (resultado.success) {
+            res.json(resultado);
+        } else {
+            res.status(400).json(resultado);
+        }
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Activar superdefensa
+router.post('/:batallaId/activar-superdefensa', async (req, res) => {
+    try {
+        const { batallaId } = req.params;
+        const { personajeId } = req.body;
+        if (!personajeId) {
+            return res.status(400).json({ success: false, error: 'Se requiere personajeId' });
+        }
+        const resultado = await activarSuperDefensa(batallaId, personajeId);
+        if (resultado.success) {
+            res.json(resultado);
+        } else {
+            res.status(400).json(resultado);
+        }
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
 
 // Crear una nueva batalla
 router.post('/crear', async (req, res) => {

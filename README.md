@@ -1,3 +1,48 @@
+## ⚡ Barras de Poder y Defensa
+
+Cada personaje en batalla tiene dos barras:
+
+- **Barra de Poder (`powerBar`)**: Se llena al recibir daño. Cuando llega a 100, el personaje puede activar un superataque (el siguiente golpe que use hace el doble de daño y la barra vuelve a 0).
+- **Barra de Defensa (`defenseBar`)**: Se llena al recibir daño. Cuando llega a 100, el personaje puede activar una super defensa (el siguiente golpe recibido le hace la mitad de daño y la barra vuelve a 0).
+
+Estas barras se exponen en los endpoints de estado de batalla y de información detallada, por ejemplo:
+
+```json
+{
+  "id": "BATALLA_ID",
+  "estado": "en_curso",
+  "ronda": 2,
+  "turno": "heroes",
+  "personajeActual": {
+    "id": 1,
+    "idUnico": "H1",
+    "alias": "Superman",
+    "equipo": "heroes",
+    "powerBar": 80,
+    "defenseBar": 60
+  },
+  "equipoHeroes": {
+    "nombre": "Equipo de Héroes",
+    "personajes": [
+      {
+        "id": 1,
+        "alias": "Superman",
+        "vida": 120,
+        "powerBar": 80,
+        "defenseBar": 60,
+        // ...
+      },
+      // ...
+    ]
+  },
+  // ...
+}
+```
+
+**Notas:**
+- Las barras suben automáticamente al recibir daño.
+- El usuario puede decidir cuándo activar el superataque o la super defensa si la barra está llena.
+- El historial de la batalla también registra el estado de las barras tras cada ataque.
 # API de Superhéroes - Sistema de Batallas por Equipos
 
 API para gestionar batallas entre equipos de héroes y villanos con sistema de turnos por rondas y selección de personajes iniciales.
@@ -24,8 +69,38 @@ El servidor se ejecutará en `http://localhost:3001`
 
 ## 📚 Documentación API
 
+
 La documentación completa está disponible en Swagger UI:
 `http://localhost:3001/api-docs`
+
+## ⚡ Activar Superataque y Superdefensa
+
+Cuando la barra correspondiente de un personaje llega a 100, puedes activar su superataque o superdefensa usando los siguientes endpoints:
+
+### Activar Superataque
+
+```bash
+POST /api/batallas/{batallaId}/activar-superataque
+{
+  "personajeId": "H1"  // ID único del personaje
+}
+```
+
+### Activar Superdefensa
+
+```bash
+POST /api/batallas/{batallaId}/activar-superdefensa
+{
+  "personajeId": "H1"  // ID único del personaje
+}
+```
+
+**Notas:**
+- Solo puedes activar el superataque si la barra de poder (`powerBar`) está llena (100).
+- Solo puedes activar la superdefensa si la barra de defensa (`defenseBar`) está llena (100).
+- Una vez activado, el siguiente ataque (o defensa) del personaje será especial y la barra correspondiente volverá a 0.
+
+Puedes consultar el estado de las barras y si hay un superataque/superdefensa pendiente en los endpoints `/info` y `/estado`.
 
 ## 🎯 Sistema de IDs Únicos
 

@@ -9,17 +9,61 @@ export class PersonajeBatalla {
         this.vidaMaxima = 200;
         this.activo = true;
         this.orden = 0;
+        // Barras de poder y defensa (0 a 100)
+        this.powerBar = 0;
+        this.defenseBar = 0;
+        this.superAtaquePendiente = false;
+        this.superDefensaPendiente = false;
         // Crear ID único para evitar conflictos
         this.idUnico = esHeroe ? `H${personaje.id}` : `V${personaje.id}`;
     }
 
     recibirDano(dano) {
-        this.vida = Math.max(0, this.vida - dano);
+        // Llenar barras por daño recibido
+        this.powerBar += dano;
+        if (this.powerBar > 100) this.powerBar = 100;
+        this.defenseBar += dano;
+        if (this.defenseBar > 100) this.defenseBar = 100;
+        // Aplicar super defensa si está pendiente
+        let danoFinal = dano;
+        if (this.superDefensaPendiente) {
+            danoFinal = Math.ceil(dano / 2);
+            this.superDefensaPendiente = false;
+        }
+        this.vida = Math.max(0, this.vida - danoFinal);
         if (this.vida <= 0) {
             this.activo = false;
         }
         return this.vida;
     }
+
+    puedeUsarSuperAtaque() {
+        return this.powerBar >= 100;
+    }
+
+    activarSuperAtaque() {
+        if (this.puedeUsarSuperAtaque()) {
+            this.superAtaquePendiente = true;
+            this.powerBar = 0;
+            return true;
+        }
+        return false;
+    }
+
+    puedeUsarSuperDefensa() {
+        return this.defenseBar >= 100;
+    }
+
+    activarSuperDefensa() {
+        if (this.puedeUsarSuperDefensa()) {
+            this.superDefensaPendiente = true;
+            this.defenseBar = 0;
+            return true;
+        }
+        return false;
+    }
+
+
 
     estaVivo() {
         return this.vida > 0;
@@ -162,6 +206,24 @@ export class BatallaEquipo {
                 descripcion = 'Golpe básico';
         }
 
+        // Aplicar superataque si está pendiente
+        if (atacante.superAtaquePendiente) {
+            dano = dano * 2;
+            descripcion += ' (SUPERATAQUE)';
+            atacante.superAtaquePendiente = false;
+        }
+
+        // Permitir activar superataque si la barra está llena
+        if (atacante.puedeUsarSuperAtaque && atacante.puedeUsarSuperAtaque()) {
+            // Aquí podrías decidir si se activa automáticamente o dejarlo a decisión del usuario
+            // atacante.activarSuperAtaque();
+        }
+
+        // Permitir activar superdefensa si la barra está llena
+        if (objetivo.puedeUsarSuperDefensa && objetivo.puedeUsarSuperDefensa()) {
+            // objetivo.activarSuperDefensa();
+        }
+
         const vidaAnterior = objetivo.vida;
         objetivo.recibirDano(dano);
         const vidaActual = objetivo.vida;
@@ -173,7 +235,9 @@ export class BatallaEquipo {
             dano,
             vidaAnterior,
             vidaActual,
-            objetivoEliminado: !objetivo.estaVivo()
+            objetivoEliminado: !objetivo.estaVivo(),
+            powerBarAtacante: atacante.powerBar,
+            defenseBarObjetivo: objetivo.defenseBar
         });
 
         // Verificar si el objetivo fue eliminado
@@ -338,7 +402,9 @@ export class BatallaEquipo {
                 id: personajeActual.id,
                 idUnico: personajeActual.idUnico,
                 alias: personajeActual.alias,
-                equipo: this.turno
+                equipo: this.turno,
+                powerBar: personajeActual.powerBar,
+                defenseBar: personajeActual.defenseBar
             } : null,
             equipoHeroes: {
                 nombre: this.equipoHeroes.nombreEquipo,
@@ -348,7 +414,9 @@ export class BatallaEquipo {
                     alias: p.alias,
                     vida: p.vida,
                     activo: p.activo,
-                    vivo: p.estaVivo()
+                    vivo: p.estaVivo(),
+                    powerBar: p.powerBar,
+                    defenseBar: p.defenseBar
                 }))
             },
             equipoVillanos: {
@@ -359,7 +427,9 @@ export class BatallaEquipo {
                     alias: p.alias,
                     vida: p.vida,
                     activo: p.activo,
-                    vivo: p.estaVivo()
+                    vivo: p.estaVivo(),
+                    powerBar: p.powerBar,
+                    defenseBar: p.defenseBar
                 }))
             },
             historial: this.historial
@@ -376,7 +446,9 @@ export class BatallaEquipo {
             idUnico: p.idUnico,
             alias: p.alias,
             vida: p.vida,
-            equipo: this.turno
+            equipo: this.turno,
+            powerBar: p.powerBar,
+            defenseBar: p.defenseBar
         }));
 
         // Obtener personajes que pueden ser atacados (del equipo contrario)
@@ -386,7 +458,9 @@ export class BatallaEquipo {
             idUnico: p.idUnico,
             alias: p.alias,
             vida: p.vida,
-            equipo: this.turno === 'heroes' ? 'villanos' : 'heroes'
+            equipo: this.turno === 'heroes' ? 'villanos' : 'heroes',
+            powerBar: p.powerBar,
+            defenseBar: p.defenseBar
         }));
 
         return {
@@ -399,7 +473,9 @@ export class BatallaEquipo {
                 id: personajeActual.id,
                 idUnico: personajeActual.idUnico,
                 alias: personajeActual.alias,
-                equipo: this.turno
+                equipo: this.turno,
+                powerBar: personajeActual.powerBar,
+                defenseBar: personajeActual.defenseBar
             } : null,
             personajesAtacantes,
             personajesObjetivo,
@@ -411,7 +487,9 @@ export class BatallaEquipo {
                     alias: p.alias,
                     vida: p.vida,
                     activo: p.activo,
-                    vivo: p.estaVivo()
+                    vivo: p.estaVivo(),
+                    powerBar: p.powerBar,
+                    defenseBar: p.defenseBar
                 }))
             },
             equipoVillanos: {
@@ -422,7 +500,9 @@ export class BatallaEquipo {
                     alias: p.alias,
                     vida: p.vida,
                     activo: p.activo,
-                    vivo: p.estaVivo()
+                    vivo: p.estaVivo(),
+                    powerBar: p.powerBar,
+                    defenseBar: p.defenseBar
                 }))
             }
         };
