@@ -50,10 +50,13 @@ API para gestionar batallas entre equipos de héroes y villanos con sistema de t
 ## 🚀 Características
 
 - **Sistema de Batallas por Equipos**: 3 héroes vs 3 villanos
-- **Sistema de Turnos**: Turnos alternados entre equipos
+- **Sistema de Turnos**: Turnos alternados entre equipos con selección libre de personajes
 - **Selección de Personajes Iniciales**: El usuario puede elegir qué héroe y villano empiezan la batalla
 - **Tipos de Ataque**: Básico (5), Especial (30) y Crítico (45) puntos de daño
 - **Vida de Personajes**: 200 puntos de vida por personaje
+- **Habilidades Especiales**: 6 habilidades únicas con cooldown de 3 turnos
+- **Sistema de Efectos**: Veneno y regeneración con duración limitada
+- **Barras de Poder**: Super ataque y super defensa cuando alcanzan 100 puntos
 - **IDs Únicos**: Sistema para evitar conflictos entre héroes y villanos
 - **Persistencia**: Guardado automático de batallas finalizadas
 - **Historial**: Consulta de batallas anteriores y estadísticas
@@ -101,6 +104,50 @@ POST /api/batallas/{batallaId}/activar-superdefensa
 - Una vez activado, el siguiente ataque (o defensa) del personaje será especial y la barra correspondiente volverá a 0.
 
 Puedes consultar el estado de las barras y si hay un superataque/superdefensa pendiente en los endpoints `/info` y `/estado`.
+
+## 🌟 Habilidades Especiales
+
+Cada personaje tiene una habilidad especial única que puede usar una vez cada 3 turnos:
+
+### Habilidades de Héroes:
+- **Curación Rápida**: Restaura 50 puntos de vida al personaje
+- **Golpe Poderoso**: Ataque devastador de 60 puntos de daño
+- **Escudo Protector**: Otorga regeneración durante 3 turnos (+15 vida/turno)
+
+### Habilidades de Villanos:
+- **Robo de Vida**: Roba 40 puntos de vida del objetivo
+- **Ataque Venenoso**: Causa 35 puntos de daño + veneno por 3 turnos (-10 vida/turno)
+- **Regeneración Sombría**: Auto-curación de 45 puntos + regeneración por 2 turnos
+
+### Usar Habilidad Especial:
+
+```bash
+POST /api/batallas/{batallaId}/usar-habilidad
+{
+  "personajeId": "H1",  // ID único del personaje que usa la habilidad
+  "objetivoId": "V2"    // ID único del objetivo (opcional, depende de la habilidad)
+}
+```
+
+**Notas:**
+- Cada habilidad tiene cooldown de 3 turnos
+- Las habilidades de curación no requieren objetivo
+- Los efectos de veneno y regeneración se aplican automáticamente cada turno
+- El cooldown se reduce automáticamente después de cada turno
+
+## 💊 Sistema de Efectos
+
+### Veneno:
+- **Duración**: 3 turnos
+- **Efecto**: -10 puntos de vida por turno
+- **Aplicado por**: Ataque Venenoso de villanos
+
+### Regeneración:
+- **Duración**: 2-3 turnos (depende de la habilidad)
+- **Efecto**: +15 puntos de vida por turno
+- **Aplicado por**: Escudo Protector y Regeneración Sombría
+
+**Los efectos se procesan automáticamente al final de cada turno.**
 
 ## 🎯 Sistema de IDs Únicos
 
@@ -179,6 +226,9 @@ POST /api/batallas/{batallaId}/atacar
 | GET | `/api/batallas/{id}/info` | **INFO DETALLADA** (IDs únicos) |
 | POST | `/api/batallas/{id}/iniciar` | Iniciar batalla |
 | POST | `/api/batallas/{id}/atacar` | Realizar ataque |
+| POST | `/api/batallas/{id}/usar-habilidad` | **Usar habilidad especial** |
+| POST | `/api/batallas/{id}/activar-superataque` | Activar superataque |
+| POST | `/api/batallas/{id}/activar-superdefensa` | Activar superdefensa |
 | GET | `/api/batallas/{id}/estado` | Estado de batalla |
 | GET | `/api/batallas/activas` | Batallas en curso |
 | GET | `/api/batallas/historial` | Historial de batallas |
@@ -234,16 +284,35 @@ curl -X POST http://localhost:3001/api/batallas/BATALLA_ID/atacar \
     "objetivoId": "V2", 
     "tipoAtaque": "basico"
   }'
+
+# 5. Usar habilidad especial
+curl -X POST http://localhost:3001/api/batallas/BATALLA_ID/usar-habilidad \
+  -H "Content-Type: application/json" \
+  -d '{
+    "personajeId": "H1", 
+    "objetivoId": "V2"
+  }'
+
+# 6. Activar superataque (cuando barra esté llena)
+curl -X POST http://localhost:3001/api/batallas/BATALLA_ID/activar-superataque \
+  -H "Content-Type: application/json" \
+  -d '{
+    "personajeId": "H1"
+  }'
 ```
 
 ## 📈 Características del Sistema
 
 - **Turnos Alternados**: Los equipos atacan por turnos
+- **Selección Libre**: Cualquier personaje vivo del equipo en turno puede atacar
 - **Selección de Inicio**: Puedes elegir qué personaje de cada equipo inicia
 - **Validación de Equipos**: Solo puedes atacar al equipo contrario
 - **Sistema de Vida**: 200 puntos por personaje
+- **Habilidades Únicas**: 6 habilidades especiales diferentes con cooldown
+- **Efectos de Estado**: Veneno y regeneración con procesamiento automático
+- **Barras de Poder**: Sistema de superataques y superdefensas
 - **Eliminación**: Personajes eliminados no pueden atacar
-- **Finalización**: Batalla termina cuando un equipo es eliminado o se completan 3 rondas
+- **Finalización**: Batalla termina cuando un equipo es eliminado completamente
 - **Persistencia**: Las batallas finalizadas se guardan automáticamente
 
 ## 🛠️ Desarrollo
@@ -280,6 +349,10 @@ api-superheroes/
 
 - [ ] Interfaz web para batallas
 - [ ] Más tipos de ataques
-- [ ] Habilidades especiales por personaje
+- [x] Habilidades especiales por personaje ✅
+- [x] Sistema de efectos (veneno/regeneración) ✅
+- [x] Selección libre de personajes en turno ✅
 - [ ] Sistema de niveles
-- [ ] Modo multijugador 
+- [ ] Modo multijugador
+- [ ] Diferentes mapas de batalla
+- [ ] Objetos consumibles 

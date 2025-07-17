@@ -12,7 +12,8 @@ import {
     probarSistema,
     obtenerInfoBatalla,
     activarSuperAtaque,
-    activarSuperDefensa
+    activarSuperDefensa,
+    usarHabilidad
 } from '../services/batallaService.js';
 
 const router = express.Router();
@@ -52,6 +53,34 @@ router.post('/:batallaId/activar-superdefensa', async (req, res) => {
         }
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Usar habilidad especial
+router.post('/:batallaId/usar-habilidad', async (req, res) => {
+    try {
+        const { batallaId } = req.params;
+        const { personajeId, objetivoId } = req.body;
+        
+        if (!personajeId) {
+            return res.status(400).json({
+                success: false,
+                error: 'Se requiere personajeId'
+            });
+        }
+
+        const resultado = await usarHabilidad(batallaId, personajeId, objetivoId);
+        
+        if (resultado.success) {
+            res.json(resultado);
+        } else {
+            res.status(400).json(resultado);
+        }
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
     }
 });
 

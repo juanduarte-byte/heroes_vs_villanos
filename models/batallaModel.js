@@ -16,6 +16,26 @@ export class PersonajeBatalla {
         this.superDefensaPendiente = false;
         // Crear ID único para evitar conflictos
         this.idUnico = esHeroe ? `H${personaje.id}` : `V${personaje.id}`;
+        
+        // Habilidades especiales simples
+        this.habilidadNombre = this.asignarHabilidad(esHeroe);
+        this.habilidadCooldown = 0; // Turnos restantes de cooldown
+        
+        // Efectos simples
+        this.efectos = {
+            veneno: 0,      // Turnos restantes de veneno
+            regeneracion: 0  // Turnos restantes de regeneración
+        };
+    }
+
+    asignarHabilidad(esHeroe) {
+        if (esHeroe) {
+            const habilidadesHeroes = ['Curación Rápida', 'Golpe Poderoso', 'Escudo Personal'];
+            return habilidadesHeroes[Math.floor(Math.random() * habilidadesHeroes.length)];
+        } else {
+            const habilidadesVillanos = ['Robo de Vida', 'Veneno Leve', 'Golpe Sucio'];
+            return habilidadesVillanos[Math.floor(Math.random() * habilidadesVillanos.length)];
+        }
     }
 
     recibirDano(dano) {
@@ -82,6 +102,132 @@ export class PersonajeBatalla {
 
     estaActivo() {
         return this.activo && this.estaVivo();
+    }
+
+    aplicarEfectos() {
+        const mensajes = [];
+        
+        // Aplicar veneno
+        if (this.efectos.veneno > 0) {
+            this.recibirDano(10);
+            mensajes.push(`💀 ${this.alias} pierde 10 vida por veneno`);
+            this.efectos.veneno--;
+        }
+        
+        // Aplicar regeneración
+        if (this.efectos.regeneracion > 0) {
+            const vidaRecuperada = Math.min(10, this.vidaMaxima - this.vida);
+            this.vida += vidaRecuperada;
+            mensajes.push(`💚 ${this.alias} recupera ${vidaRecuperada} vida`);
+            this.efectos.regeneracion--;
+        }
+        
+        return mensajes;
+    }
+
+    aplicarVeneno(turnos = 3) {
+        this.efectos.veneno = turnos;
+    }
+
+    aplicarRegeneracion(turnos = 2) {
+        this.efectos.regeneracion = turnos;
+    }
+
+    puedeUsarHabilidad() {
+        return this.habilidadCooldown === 0 && this.estaVivo();
+    }
+
+    usarHabilidad(objetivo) {
+        if (!this.puedeUsarHabilidad()) {
+            throw new Error(`Habilidad en cooldown: ${this.habilidadCooldown} turnos restantes`);
+        }
+
+        let resultado = {};
+        
+        switch (this.habilidadNombre) {
+            case 'Curación Rápida':
+                const vidaCurada = Math.min(30, this.vidaMaxima - this.vida);
+                this.vida += vidaCurada;
+                resultado = { 
+                    mensaje: `✨ ${this.alias} usa Curación Rápida y recupera ${vidaCurada} vida`, 
+                    vida: vidaCurada,
+                    tipo: 'curacion'
+                };
+                break;
+                
+            case 'Golpe Poderoso':
+                const dano = 50;
+                objetivo.recibirDano(dano);
+                resultado = { 
+                    mensaje: `💥 ${this.alias} usa Golpe Poderoso contra ${objetivo.alias}`, 
+                    dano,
+                    tipo: 'ataque'
+                };
+                break;
+                
+            case 'Escudo Personal':
+                this.aplicarRegeneracion(2);
+                resultado = { 
+                    mensaje: `🛡️ ${this.alias} activa Escudo Personal (regeneración por 2 turnos)`, 
+                    tipo: 'defensa'
+                };
+                break;
+                
+            case 'Robo de Vida':
+                const danoRobo = 25;
+                objetivo.recibirDano(danoRobo);
+                const vidaRobada = Math.min(danoRobo, this.vidaMaxima - this.vida);
+                this.vida += vidaRobada;
+                resultado = { 
+                    mensaje: `🌑 ${this.alias} usa Robo de Vida contra ${objetivo.alias}`, 
+                    dano: danoRobo, 
+                    vida: vidaRobada,
+                    tipo: 'vampirismo'
+                };
+                break;
+                
+            case 'Veneno Leve':
+                objetivo.aplicarVeneno(2);
+                resultado = { 
+                    mensaje: `☠️ ${this.alias} envenena a ${objetivo.alias} por 2 turnos`, 
+                    tipo: 'debuff'
+                };
+                break;
+                
+            case 'Golpe Sucio':
+                const danoSucio = 35;
+                objetivo.recibirDano(danoSucio);
+                // 50% de probabilidad de envenenar
+                if (Math.random() < 0.5) {
+                    objetivo.aplicarVeneno(1);
+                    resultado = { 
+                        mensaje: `🗡️ ${this.alias} usa Golpe Sucio contra ${objetivo.alias} y lo envenena`, 
+                        dano: danoSucio,
+                        veneno: true,
+                        tipo: 'ataque_especial'
+                    };
+                } else {
+                    resultado = { 
+                        mensaje: `🗡️ ${this.alias} usa Golpe Sucio contra ${objetivo.alias}`, 
+                        dano: danoSucio,
+                        veneno: false,
+                        tipo: 'ataque_especial'
+                    };
+                }
+                break;
+                
+            default:
+                throw new Error('Habilidad no reconocida');
+        }
+
+        this.habilidadCooldown = 3; // Cooldown de 3 turnos
+        return resultado;
+    }
+
+    reducirCooldown() {
+        if (this.habilidadCooldown > 0) {
+            this.habilidadCooldown--;
+        }
     }
 }
 
@@ -434,10 +580,19 @@ export class BatallaEquipo {
                     idUnico: p.idUnico,
                     alias: p.alias,
                     vida: p.vida,
+                    vidaMaxima: p.vidaMaxima,
+                    porcentajeVida: Math.round((p.vida / p.vidaMaxima) * 100),
                     activo: p.activo,
                     vivo: p.estaVivo(),
                     powerBar: p.powerBar,
-                    defenseBar: p.defenseBar
+                    defenseBar: p.defenseBar,
+                    habilidad: p.habilidadNombre,
+                    habilidadLista: p.puedeUsarHabilidad(),
+                    habilidadCooldown: p.habilidadCooldown,
+                    efectos: {
+                        veneno: p.efectos.veneno,
+                        regeneracion: p.efectos.regeneracion
+                    }
                 }))
             },
             equipoVillanos: {
@@ -447,10 +602,19 @@ export class BatallaEquipo {
                     idUnico: p.idUnico,
                     alias: p.alias,
                     vida: p.vida,
+                    vidaMaxima: p.vidaMaxima,
+                    porcentajeVida: Math.round((p.vida / p.vidaMaxima) * 100),
                     activo: p.activo,
                     vivo: p.estaVivo(),
                     powerBar: p.powerBar,
-                    defenseBar: p.defenseBar
+                    defenseBar: p.defenseBar,
+                    habilidad: p.habilidadNombre,
+                    habilidadLista: p.puedeUsarHabilidad(),
+                    habilidadCooldown: p.habilidadCooldown,
+                    efectos: {
+                        veneno: p.efectos.veneno,
+                        regeneracion: p.efectos.regeneracion
+                    }
                 }))
             },
             historial: this.historial
@@ -467,9 +631,18 @@ export class BatallaEquipo {
             idUnico: p.idUnico,
             alias: p.alias,
             vida: p.vida,
+            vidaMaxima: p.vidaMaxima,
+            porcentajeVida: Math.round((p.vida / p.vidaMaxima) * 100),
             equipo: this.turno,
             powerBar: p.powerBar,
-            defenseBar: p.defenseBar
+            defenseBar: p.defenseBar,
+            habilidad: p.habilidadNombre,
+            habilidadLista: p.puedeUsarHabilidad(),
+            habilidadCooldown: p.habilidadCooldown,
+            efectos: {
+                veneno: p.efectos.veneno,
+                regeneracion: p.efectos.regeneracion
+            }
         }));
 
         // Obtener personajes que pueden ser atacados (del equipo contrario)
@@ -479,9 +652,18 @@ export class BatallaEquipo {
             idUnico: p.idUnico,
             alias: p.alias,
             vida: p.vida,
+            vidaMaxima: p.vidaMaxima,
+            porcentajeVida: Math.round((p.vida / p.vidaMaxima) * 100),
             equipo: this.turno === 'heroes' ? 'villanos' : 'heroes',
             powerBar: p.powerBar,
-            defenseBar: p.defenseBar
+            defenseBar: p.defenseBar,
+            habilidad: p.habilidadNombre,
+            habilidadLista: p.puedeUsarHabilidad(),
+            habilidadCooldown: p.habilidadCooldown,
+            efectos: {
+                veneno: p.efectos.veneno,
+                regeneracion: p.efectos.regeneracion
+            }
         }));
 
         return {

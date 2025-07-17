@@ -280,8 +280,9 @@ export async function realizarAtaque(batallaId, atacanteId, objetivoId, tipoAtaq
         // Verificar que el atacante sea del equipo que tiene el turno
         const equipoAtacante = atacante.esHeroe ? 'heroes' : 'villanos';
         if (equipoAtacante !== batalla.turno) {
-            const equipoNombre = batalla.turno === 'heroes' ? 'héroes' : 'villanos';
-            throw new Error(`No es el turno del equipo de ${equipoNombre}. Es el turno de ${batalla.turno === 'heroes' ? 'héroes' : 'villanos'}.`);
+            const equipoNombre = equipoAtacante === 'heroes' ? 'héroes' : 'villanos';
+            const turnoActual = batalla.turno === 'heroes' ? 'héroes' : 'villanos';
+            throw new Error(`No es el turno de ${equipoNombre}. Es el turno de ${turnoActual}. Solo personajes de ${turnoActual} pueden atacar.`);
         }
 
         // Realizar el ataque
@@ -293,6 +294,16 @@ export async function realizarAtaque(batallaId, atacanteId, objetivoId, tipoAtaq
             vidaRestante: resultadoAtaque.vidaActual,
             eliminado: resultadoAtaque.eliminado,
             estadoBatalla: batalla.estado
+        });
+
+        // Procesar efectos de todos los personajes y reducir cooldowns después del ataque
+        const mensajesEfectos = [];
+        [...batalla.equipoHeroes.personajes, ...batalla.equipoVillanos.personajes].forEach(p => {
+            if (p.estaVivo()) {
+                const efectosPersonaje = p.aplicarEfectos();
+                mensajesEfectos.push(...efectosPersonaje);
+                p.reducirCooldown();
+            }
         });
 
         // Cambiar turno después del ataque
@@ -326,6 +337,7 @@ export async function realizarAtaque(batallaId, atacanteId, objetivoId, tipoAtaq
                 vidaRestante: resultadoAtaque.vidaActual,
                 eliminado: resultadoAtaque.eliminado
             },
+            efectos: mensajesEfectos,
             mensaje: `${atacante.alias} atacó a ${objetivo.alias} con ${tipoAtaque} causando ${resultadoAtaque.dano} puntos de daño`
         };
     } catch (error) {
@@ -545,4 +557,101 @@ export async function probarSistema() {
             error: error.message
         };
     }
-} 
+}
+
+export async function usarHabilidad(batallaId, personajeId, objetivoId) {
+    try {
+        const batalla = batallasActivas.get(batallaId);
+        if (!batalla) {
+            throw new Error('Batalla no encontrada o ya finalizada');
+        }
+
+        if (batalla.estado !== 'en_curso') {
+            throw new Error('La batalla no está en curso');
+        }
+
+        // Buscar personaje que usa la habilidad
+        let personaje = null;
+        if (personajeId.startsWith('H')) {
+            personaje = batalla.equipoHeroes.personajes.find(p => p.idUnico === personajeId);
+        } else if (personajeId.startsWith('V')) {
+            personaje = batalla.equipoVillanos.personajes.find(p => p.idUnico === personajeId);
+        }
+
+        if (!personaje) {
+            throw new Error('Personaje no encontrado en la batalla');
+        }
+
+        // Validar que sea el turno del personaje
+        const equipoPersonaje = personaje.esHeroe ? 'heroes' : 'villanos';
+        if (equipoPersonaje !== batalla.turno) {
+            throw new Error(`No es el turno de ${equipoPersonaje}. Turno actual: ${batalla.turno}`);
+        }
+
+        // Buscar objetivo si es necesario
+        let objetivo = null;
+        if (objetivoId) {
+            if (objetivoId.startsWith('H')) {
+                objetivo = batalla.equipoHeroes.personajes.find(p => p.idUnico === objetivoId);
+            } else if (objetivoId.startsWith('V')) {
+                objetivo = batalla.equipoVillanos.personajes.find(p => p.idUnico === objetivoId);
+            }
+
+            if (!objetivo) {
+                throw new Error('Objetivo no encontrado en la batalla');
+            }
+        }
+
+        // Usar habilidad
+        const resultado = personaje.usarHabilidad(objetivo);
+
+        // Registrar evento
+        batalla.registrarEvento('habilidad_especial', resultado.mensaje, {
+            personaje: personaje.alias,
+            habilidad: personaje.habilidadNombre,
+            objetivo: objetivo ? objetivo.alias : null,
+            tipo: resultado.tipo,
+            cooldown: personaje.habilidadCooldown
+        });
+
+        // Verificar si el objetivo fue eliminado
+        if (objetivo && !objetivo.estaVivo()) {
+            batalla.registrarEvento('eliminacion', `${objetivo.alias} ha sido eliminado por habilidad especial`);
+            batalla.ronda++;
+        }
+
+        // Procesar efectos de todos los personajes y reducir cooldowns
+        const mensajesEfectos = [];
+        [...batalla.equipoHeroes.personajes, ...batalla.equipoVillanos.personajes].forEach(p => {
+            if (p.estaVivo()) {
+                const efectosPersonaje = p.aplicarEfectos();
+                mensajesEfectos.push(...efectosPersonaje);
+                p.reducirCooldown();
+            }
+        });
+
+        // Verificar condiciones de victoria
+        if (!batalla.equipoHeroes.tienePersonajesVivos() || !batalla.equipoVillanos.tienePersonajesVivos()) {
+            batalla.finalizarBatalla();
+        }
+
+        // Cambiar turno después de usar habilidad
+        if (batalla.estado === 'en_curso') {
+            batalla.cambiarTurno();
+        }
+
+        return {
+            success: true,
+            habilidad: resultado,
+            efectos: mensajesEfectos,
+            batalla: batalla.getEstadoActual(),
+            mensaje: 'Habilidad especial usada exitosamente'
+        };
+
+    } catch (error) {
+        return {
+            success: false,
+            error: error.message
+        };
+    }
+}

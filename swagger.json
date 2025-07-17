@@ -305,31 +305,43 @@
                     "items": { "type": "integer" },
                     "minItems": 3,
                     "maxItems": 3,
-                    "description": "IDs de los 3 héroes que participarán"
+                    "description": "IDs de los 3 héroes que participarán",
+                    "example": [1, 2, 3]
                   },
                   "equipoVillanos": {
                     "type": "array",
                     "items": { "type": "integer" },
                     "minItems": 3,
                     "maxItems": 3,
-                    "description": "IDs de los 3 villanos que participarán"
+                    "description": "IDs de los 3 villanos que participarán",
+                    "example": [1, 2, 3]
                   },
                   "iniciador": {
                     "type": "string",
                     "enum": ["heroes", "villanos"],
                     "default": "heroes",
-                    "description": "Equipo que iniciará la batalla"
+                    "description": "Equipo que iniciará la batalla",
+                    "example": "heroes"
                   },
                   "primerHeroe": {
                     "type": "integer",
-                    "description": "ID del héroe que iniciará la batalla (debe estar en equipoHeroes)"
+                    "description": "ID del héroe que iniciará la batalla (debe estar en equipoHeroes)",
+                    "example": 1
                   },
                   "primerVillano": {
                     "type": "integer",
-                    "description": "ID del villano que iniciará la batalla (debe estar en equipoVillanos)"
+                    "description": "ID del villano que iniciará la batalla (debe estar en equipoVillanos)",
+                    "example": 1
                   }
                 },
-                "required": ["equipoHeroes", "equipoVillanos"]
+                "required": ["equipoHeroes", "equipoVillanos"],
+                "example": {
+                  "equipoHeroes": [1, 2, 3],
+                  "equipoVillanos": [1, 2, 3],
+                  "iniciador": "heroes",
+                  "primerHeroe": 1,
+                  "primerVillano": 1
+                }
               }
             }
           }
@@ -429,6 +441,57 @@
           },
           "400": {
             "description": "Error en el ataque",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/batallas/{batallaId}/usar-habilidad": {
+      "post": {
+        "tags": ["Batallas"],
+        "summary": "Usar habilidad especial",
+        "description": "Permite a un personaje usar su habilidad especial única. Cada personaje tiene una habilidad diferente con cooldown de 3 turnos.",
+        "parameters": [
+          { "name": "batallaId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "personajeId": {
+                    "type": "string",
+                    "description": "ID único del personaje que usa la habilidad (ej: H1, V2)",
+                    "example": "H1"
+                  },
+                  "objetivoId": {
+                    "type": "string",
+                    "description": "ID único del objetivo (opcional, depende de la habilidad)",
+                    "example": "V1"
+                  }
+                },
+                "required": ["personajeId"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Habilidad especial usada exitosamente",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HabilidadResponse" }
+              }
+            }
+          },
+          "400": {
+            "description": "Error al usar habilidad",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ErrorResponse" }
@@ -857,6 +920,28 @@
               "porcentajeVictoriasVillanos": { "type": "string" }
             }
           },
+          "mensaje": { "type": "string" }
+        }
+      },
+      "HabilidadResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "habilidad": {
+            "type": "object",
+            "properties": {
+              "mensaje": { "type": "string" },
+              "tipo": { "type": "string" },
+              "dano": { "type": "integer" },
+              "vida": { "type": "integer" },
+              "veneno": { "type": "boolean" }
+            }
+          },
+          "efectos": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "batalla": { "$ref": "#/components/schemas/BatallaResponse" },
           "mensaje": { "type": "string" }
         }
       },
