@@ -2,14 +2,14 @@
   "openapi": "3.0.0",
   "info": {
     "title": "API Superhéroes - Sistema de Batallas por Equipos",
-    "version": "2.0.0",
-    "description": "API para gestión de superhéroes, villanos y batallas por equipos con sistema de turnos y IDs únicos."
+    "version": "3.0.0",
+    "description": "API para gestión de superhéroes, villanos y batallas por equipos con persistencia en MongoDB Atlas. Incluye sistema de turnos, IDs únicos, barras de poder/defensa, y validaciones mejoradas para batallas estratégicas."
   },
   "tags": [
-    { "name": "Heroes", "description": "Operaciones relacionadas con héroes" },
-    { "name": "Villanos", "description": "Operaciones relacionadas con villanos" },
-    { "name": "Batallas", "description": "Sistema de batallas por equipos con turnos" },
-    { "name": "Enfrentamientos", "description": "Historial de enfrentamientos individuales" }
+    { "name": "Heroes", "description": "Operaciones CRUD de héroes con persistencia en MongoDB" },
+    { "name": "Villanos", "description": "Operaciones CRUD de villanos con persistencia en MongoDB" },
+    { "name": "Batallas", "description": "Sistema de batallas por equipos con turnos, almacenadas en MongoDB" },
+    { "name": "Enfrentamientos", "description": "Historial de enfrentamientos individuales guardados en MongoDB" }
   ],
   "servers": [
     {
@@ -79,9 +79,10 @@
       "get": {
         "tags": ["Heroes"],
         "summary": "Obtener todos los héroes",
+        "description": "Obtiene la lista completa de héroes desde MongoDB Atlas",
         "responses": {
           "200": {
-            "description": "Lista de héroes",
+            "description": "Lista de héroes obtenida desde MongoDB",
             "content": {
               "application/json": {
                 "schema": {
@@ -96,6 +97,7 @@
       "post": {
         "tags": ["Heroes"],
         "summary": "Agregar un nuevo héroe",
+        "description": "Crea un nuevo héroe y lo guarda en MongoDB Atlas",
         "requestBody": {
           "required": true,
           "content": {
@@ -105,7 +107,7 @@
           }
         },
         "responses": {
-          "201": { "description": "Héroe creado" },
+          "201": { "description": "Héroe creado y guardado en MongoDB" },
           "400": { "description": "Datos inválidos" }
         }
       }
@@ -290,7 +292,7 @@
       "post": {
         "tags": ["Batallas"],
         "summary": "Crear una nueva batalla por equipos",
-        "description": "Crea una batalla entre 3 héroes y 3 villanos con sistema de turnos y IDs únicos",
+        "description": "Crea una batalla entre 3 héroes y 3 villanos con sistema de turnos, IDs únicos y persistencia en MongoDB. Incluye validaciones mejoradas y mecánicas de barras de poder/defensa.",
         "requestBody": {
           "required": true,
           "content": {
@@ -384,7 +386,7 @@
       "post": {
         "tags": ["Batallas"],
         "summary": "Realizar un ataque",
-        "description": "Realiza un ataque usando IDs únicos (H1, V2, etc.)",
+        "description": "Realiza un ataque usando IDs únicos (H1, V2, etc.). Incluye validaciones para evitar ataques a personajes eliminados y actualiza las barras de poder/defensa. Los cambios se guardan automáticamente en MongoDB.",
         "parameters": [
           { "name": "batallaId", "in": "path", "required": true, "schema": { "type": "string" } }
         ],

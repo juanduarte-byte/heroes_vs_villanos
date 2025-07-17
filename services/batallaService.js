@@ -48,7 +48,12 @@ export async function activarSuperDefensa(batallaId, personajeId) {
     }
 }
 import { BatallaEquipo, EquipoBatalla } from '../models/batallaModel.js';
-import { guardarBatalla, obtenerTodasLasBatallas, obtenerBatallaPorId, obtenerEstadisticas } from '../repositories/batallaRepository.js';
+import { 
+    guardarBatalla, 
+    obtenerTodasLasBatallas, 
+    obtenerBatallaPorId, 
+    obtenerEstadisticas 
+} from '../repositories/batallaRepository.js';
 import heroRepository from '../repositories/heroRepository.js';
 import villanoRepository from '../repositories/villanoRepository.js';
 

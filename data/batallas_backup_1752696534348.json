@@ -1,0 +1,1684 @@
+[
+  {
+    "id": "1752275793863",
+    "estado": "finalizada",
+    "ronda": 4,
+    "turno": "villanos",
+    "ganador": "heroes",
+    "fecha": "2025-07-11T23:16:33.863Z",
+    "historial": [
+      {
+        "turno": "villanos",
+        "ronda": 1,
+        "tipo": "Batalla iniciada",
+        "descripcion": "Equipo villanos inicia la batalla",
+        "datos": {},
+        "timestamp": "2025-07-11T23:17:36.335Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 1,
+        "tipo": "ataque",
+        "descripcion": "Lex Luthor ataca a Superman con Golpe básico",
+        "datos": {
+          "atacante": "Lex Luthor",
+          "objetivo": "Superman",
+          "tipoAtaque": "basico",
+          "dano": 5,
+          "vidaAnterior": 200,
+          "vidaActual": 195,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-11T23:18:27.129Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 1,
+        "tipo": "cambio_turno",
+        "descripcion": "Turno de Héroes: Iron Man",
+        "datos": {},
+        "timestamp": "2025-07-11T23:18:27.129Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 1,
+        "tipo": "ataque",
+        "descripcion": "Superman ataca a Lex Luthor con Golpe básico",
+        "datos": {
+          "atacante": "Superman",
+          "objetivo": "Lex Luthor",
+          "tipoAtaque": "basico",
+          "dano": 5,
+          "vidaAnterior": 200,
+          "vidaActual": 195,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-11T23:20:36.752Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 2,
+        "tipo": "nueva_ronda",
+        "descripcion": "Inicia la ronda 2",
+        "datos": {},
+        "timestamp": "2025-07-11T23:20:36.753Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 2,
+        "tipo": "cambio_turno",
+        "descripcion": "Turno de Villanos: Thanos",
+        "datos": {},
+        "timestamp": "2025-07-11T23:20:36.753Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 2,
+        "tipo": "ataque",
+        "descripcion": "Lex Luthor ataca a Superman con Golpe especial",
+        "datos": {
+          "atacante": "Lex Luthor",
+          "objetivo": "Superman",
+          "tipoAtaque": "especial",
+          "dano": 30,
+          "vidaAnterior": 195,
+          "vidaActual": 165,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-11T23:21:46.630Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 2,
+        "tipo": "cambio_turno",
+        "descripcion": "Turno de Héroes: Batman",
+        "datos": {},
+        "timestamp": "2025-07-11T23:21:46.630Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 2,
+        "tipo": "ataque",
+        "descripcion": "Superman ataca a Lex Luthor con Golpe crítico",
+        "datos": {
+          "atacante": "Superman",
+          "objetivo": "Lex Luthor",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 195,
+          "vidaActual": 150,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-11T23:22:50.815Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 3,
+        "tipo": "nueva_ronda",
+        "descripcion": "Inicia la ronda 3",
+        "datos": {},
+        "timestamp": "2025-07-11T23:22:50.815Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 3,
+        "tipo": "cambio_turno",
+        "descripcion": "Turno de Villanos: El Pingüino",
+        "datos": {},
+        "timestamp": "2025-07-11T23:22:50.815Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 3,
+        "tipo": "ataque",
+        "descripcion": "Lex Luthor ataca a Superman con Golpe crítico",
+        "datos": {
+          "atacante": "Lex Luthor",
+          "objetivo": "Superman",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 165,
+          "vidaActual": 120,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-11T23:23:46.553Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 3,
+        "tipo": "cambio_turno",
+        "descripcion": "Turno de Héroes: Superman",
+        "datos": {},
+        "timestamp": "2025-07-11T23:23:46.553Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 3,
+        "tipo": "ataque",
+        "descripcion": "Superman ataca a Lex Luthor con Golpe crítico",
+        "datos": {
+          "atacante": "Superman",
+          "objetivo": "Lex Luthor",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 150,
+          "vidaActual": 105,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-11T23:24:01.825Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 4,
+        "tipo": "batalla_finalizada",
+        "descripcion": "Batalla finalizada. Ganador: heroes",
+        "datos": {},
+        "timestamp": "2025-07-11T23:24:01.825Z"
+      }
+    ],
+    "equipoHeroes": {
+      "personajes": [
+        {
+          "id": 1,
+          "name": "Clark Kent",
+          "alias": "Superman",
+          "team": "Liga de la Justicia",
+          "esHeroe": true,
+          "vida": 120,
+          "vidaMaxima": 200,
+          "activo": true,
+          "orden": 0,
+          "idUnico": "H1"
+        },
+        {
+          "id": 2,
+          "name": "Tony Stark",
+          "alias": "Iron Man",
+          "team": "Los Vengadores",
+          "esHeroe": true,
+          "vida": 200,
+          "vidaMaxima": 200,
+          "activo": true,
+          "orden": 0,
+          "idUnico": "H2"
+        },
+        {
+          "id": 3,
+          "name": "Bruce Wayne",
+          "alias": "Batman",
+          "team": "Liga de la Justicia",
+          "esHeroe": true,
+          "vida": 200,
+          "vidaMaxima": 200,
+          "activo": true,
+          "orden": 0,
+          "idUnico": "H3"
+        }
+      ],
+      "nombreEquipo": "Equipo de Héroes",
+      "esHeroe": true,
+      "personajeActual": 0,
+      "ganador": false
+    },
+    "equipoVillanos": {
+      "personajes": [
+        {
+          "id": 1,
+          "name": "Lex Luthor",
+          "alias": "Lex Luthor",
+          "team": "Ninguno",
+          "esHeroe": false,
+          "vida": 105,
+          "vidaMaxima": 200,
+          "activo": true,
+          "orden": 0,
+          "idUnico": "V1"
+        },
+        {
+          "id": 2,
+          "name": "Thanos",
+          "alias": "Thanos",
+          "team": "Ninguno",
+          "esHeroe": false,
+          "vida": 200,
+          "vidaMaxima": 200,
+          "activo": true,
+          "orden": 0,
+          "idUnico": "V2"
+        },
+        {
+          "id": 3,
+          "name": "Oswald Cobblepot",
+          "alias": "El Pingüino",
+          "team": "Ninguno",
+          "esHeroe": false,
+          "vida": 200,
+          "vidaMaxima": 200,
+          "activo": true,
+          "orden": 0,
+          "idUnico": "V3"
+        }
+      ],
+      "nombreEquipo": "Equipo de Villanos",
+      "esHeroe": false,
+      "personajeActual": 0,
+      "ganador": false
+    }
+  },
+  {
+    "id": "1752276795654",
+    "estado": "finalizada",
+    "ronda": 4,
+    "turno": "villanos",
+    "ganador": "empate",
+    "fecha": "2025-07-11T23:33:15.654Z",
+    "historial": [
+      {
+        "turno": "villanos",
+        "ronda": 1,
+        "tipo": "Batalla iniciada",
+        "descripcion": "Equipo villanos inicia la batalla",
+        "datos": {},
+        "timestamp": "2025-07-11T23:33:37.596Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 1,
+        "tipo": "ataque",
+        "descripcion": "Lex Luthor ataca a Superman con Golpe crítico",
+        "datos": {
+          "atacante": "Lex Luthor",
+          "objetivo": "Superman",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 200,
+          "vidaActual": 155,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-11T23:34:18.648Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 1,
+        "tipo": "cambio_turno",
+        "descripcion": "Turno de Héroes: Iron Man",
+        "datos": {},
+        "timestamp": "2025-07-11T23:34:18.648Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 1,
+        "tipo": "ataque",
+        "descripcion": "Superman ataca a Lex Luthor con Golpe crítico",
+        "datos": {
+          "atacante": "Superman",
+          "objetivo": "Lex Luthor",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 200,
+          "vidaActual": 155,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-11T23:34:35.995Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 2,
+        "tipo": "nueva_ronda",
+        "descripcion": "Inicia la ronda 2",
+        "datos": {},
+        "timestamp": "2025-07-11T23:34:35.995Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 2,
+        "tipo": "cambio_turno",
+        "descripcion": "Turno de Villanos: Thanos",
+        "datos": {},
+        "timestamp": "2025-07-11T23:34:35.995Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 2,
+        "tipo": "ataque",
+        "descripcion": "Lex Luthor ataca a Superman con Golpe crítico",
+        "datos": {
+          "atacante": "Lex Luthor",
+          "objetivo": "Superman",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 155,
+          "vidaActual": 110,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-11T23:34:54.503Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 2,
+        "tipo": "cambio_turno",
+        "descripcion": "Turno de Héroes: Batman",
+        "datos": {},
+        "timestamp": "2025-07-11T23:34:54.503Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 2,
+        "tipo": "ataque",
+        "descripcion": "Superman ataca a Lex Luthor con Golpe crítico",
+        "datos": {
+          "atacante": "Superman",
+          "objetivo": "Lex Luthor",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 155,
+          "vidaActual": 110,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-11T23:35:14.642Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 3,
+        "tipo": "nueva_ronda",
+        "descripcion": "Inicia la ronda 3",
+        "datos": {},
+        "timestamp": "2025-07-11T23:35:14.642Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 3,
+        "tipo": "cambio_turno",
+        "descripcion": "Turno de Villanos: El Pingüino",
+        "datos": {},
+        "timestamp": "2025-07-11T23:35:14.643Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 3,
+        "tipo": "ataque",
+        "descripcion": "Lex Luthor ataca a Superman con Golpe crítico",
+        "datos": {
+          "atacante": "Lex Luthor",
+          "objetivo": "Superman",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 110,
+          "vidaActual": 65,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-11T23:35:35.706Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 3,
+        "tipo": "cambio_turno",
+        "descripcion": "Turno de Héroes: Superman",
+        "datos": {},
+        "timestamp": "2025-07-11T23:35:35.706Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 3,
+        "tipo": "ataque",
+        "descripcion": "Superman ataca a Lex Luthor con Golpe crítico",
+        "datos": {
+          "atacante": "Superman",
+          "objetivo": "Lex Luthor",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 110,
+          "vidaActual": 65,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-11T23:35:57.063Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 4,
+        "tipo": "batalla_finalizada",
+        "descripcion": "Batalla finalizada. Ganador: empate",
+        "datos": {},
+        "timestamp": "2025-07-11T23:35:57.064Z"
+      }
+    ],
+    "equipoHeroes": {
+      "personajes": [
+        {
+          "id": 1,
+          "name": "Clark Kent",
+          "alias": "Superman",
+          "team": "Liga de la Justicia",
+          "esHeroe": true,
+          "vida": 65,
+          "vidaMaxima": 200,
+          "activo": true,
+          "orden": 0,
+          "idUnico": "H1"
+        },
+        {
+          "id": 2,
+          "name": "Tony Stark",
+          "alias": "Iron Man",
+          "team": "Los Vengadores",
+          "esHeroe": true,
+          "vida": 200,
+          "vidaMaxima": 200,
+          "activo": true,
+          "orden": 0,
+          "idUnico": "H2"
+        },
+        {
+          "id": 3,
+          "name": "Bruce Wayne",
+          "alias": "Batman",
+          "team": "Liga de la Justicia",
+          "esHeroe": true,
+          "vida": 200,
+          "vidaMaxima": 200,
+          "activo": true,
+          "orden": 0,
+          "idUnico": "H3"
+        }
+      ],
+      "nombreEquipo": "Equipo de Héroes",
+      "esHeroe": true,
+      "personajeActual": 0,
+      "ganador": false
+    },
+    "equipoVillanos": {
+      "personajes": [
+        {
+          "id": 1,
+          "name": "Lex Luthor",
+          "alias": "Lex Luthor",
+          "team": "Ninguno",
+          "esHeroe": false,
+          "vida": 65,
+          "vidaMaxima": 200,
+          "activo": true,
+          "orden": 0,
+          "idUnico": "V1"
+        },
+        {
+          "id": 2,
+          "name": "Thanos",
+          "alias": "Thanos",
+          "team": "Ninguno",
+          "esHeroe": false,
+          "vida": 200,
+          "vidaMaxima": 200,
+          "activo": true,
+          "orden": 0,
+          "idUnico": "V2"
+        },
+        {
+          "id": 3,
+          "name": "Oswald Cobblepot",
+          "alias": "El Pingüino",
+          "team": "Ninguno",
+          "esHeroe": false,
+          "vida": 200,
+          "vidaMaxima": 200,
+          "activo": true,
+          "orden": 0,
+          "idUnico": "V3"
+        }
+      ],
+      "nombreEquipo": "Equipo de Villanos",
+      "esHeroe": false,
+      "personajeActual": 0,
+      "ganador": false
+    }
+  },
+  {
+    "id": "1752277284031",
+    "estado": "finalizada",
+    "ronda": 4,
+    "turno": "villanos",
+    "ganador": "empate",
+    "fecha": "2025-07-11T23:41:24.031Z",
+    "historial": [
+      {
+        "turno": "villanos",
+        "ronda": 1,
+        "tipo": "Batalla iniciada",
+        "descripcion": "Equipo villanos inicia la batalla",
+        "datos": {},
+        "timestamp": "2025-07-11T23:41:52.216Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 1,
+        "tipo": "ataque",
+        "descripcion": "Lex Luthor ataca a Superman con Golpe crítico",
+        "datos": {
+          "atacante": "Lex Luthor",
+          "objetivo": "Superman",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 200,
+          "vidaActual": 155,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-11T23:42:25.068Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 1,
+        "tipo": "cambio_turno",
+        "descripcion": "Turno de Héroes: Iron Man",
+        "datos": {},
+        "timestamp": "2025-07-11T23:42:25.068Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 1,
+        "tipo": "ataque",
+        "descripcion": "Superman ataca a Lex Luthor con Golpe crítico",
+        "datos": {
+          "atacante": "Superman",
+          "objetivo": "Lex Luthor",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 200,
+          "vidaActual": 155,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-11T23:42:49.609Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 2,
+        "tipo": "nueva_ronda",
+        "descripcion": "Inicia la ronda 2",
+        "datos": {},
+        "timestamp": "2025-07-11T23:42:49.609Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 2,
+        "tipo": "cambio_turno",
+        "descripcion": "Turno de Villanos: Thanos",
+        "datos": {},
+        "timestamp": "2025-07-11T23:42:49.609Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 2,
+        "tipo": "ataque",
+        "descripcion": "Lex Luthor ataca a Superman con Golpe crítico",
+        "datos": {
+          "atacante": "Lex Luthor",
+          "objetivo": "Superman",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 155,
+          "vidaActual": 110,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-11T23:43:06.922Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 2,
+        "tipo": "cambio_turno",
+        "descripcion": "Turno de Héroes: Batman",
+        "datos": {},
+        "timestamp": "2025-07-11T23:43:06.923Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 2,
+        "tipo": "ataque",
+        "descripcion": "Superman ataca a Lex Luthor con Golpe crítico",
+        "datos": {
+          "atacante": "Superman",
+          "objetivo": "Lex Luthor",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 155,
+          "vidaActual": 110,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-11T23:43:24.490Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 3,
+        "tipo": "nueva_ronda",
+        "descripcion": "Inicia la ronda 3",
+        "datos": {},
+        "timestamp": "2025-07-11T23:43:24.490Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 3,
+        "tipo": "cambio_turno",
+        "descripcion": "Turno de Villanos: El Pingüino",
+        "datos": {},
+        "timestamp": "2025-07-11T23:43:24.490Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 3,
+        "tipo": "ataque",
+        "descripcion": "Lex Luthor ataca a Superman con Golpe crítico",
+        "datos": {
+          "atacante": "Lex Luthor",
+          "objetivo": "Superman",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 110,
+          "vidaActual": 65,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-11T23:43:39.990Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 3,
+        "tipo": "cambio_turno",
+        "descripcion": "Turno de Héroes: Superman",
+        "datos": {},
+        "timestamp": "2025-07-11T23:43:39.990Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 3,
+        "tipo": "ataque",
+        "descripcion": "Superman ataca a Lex Luthor con Golpe crítico",
+        "datos": {
+          "atacante": "Superman",
+          "objetivo": "Lex Luthor",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 110,
+          "vidaActual": 65,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-11T23:44:02.733Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 4,
+        "tipo": "batalla_finalizada",
+        "descripcion": "Batalla finalizada. Ganador: empate",
+        "datos": {},
+        "timestamp": "2025-07-11T23:44:02.734Z"
+      }
+    ],
+    "equipoHeroes": {
+      "personajes": [
+        {
+          "id": 1,
+          "name": "Clark Kent",
+          "alias": "Superman",
+          "team": "Liga de la Justicia",
+          "esHeroe": true,
+          "vida": 65,
+          "vidaMaxima": 200,
+          "activo": true,
+          "orden": 0,
+          "idUnico": "H1"
+        },
+        {
+          "id": 2,
+          "name": "Tony Stark",
+          "alias": "Iron Man",
+          "team": "Los Vengadores",
+          "esHeroe": true,
+          "vida": 200,
+          "vidaMaxima": 200,
+          "activo": true,
+          "orden": 0,
+          "idUnico": "H2"
+        },
+        {
+          "id": 3,
+          "name": "Bruce Wayne",
+          "alias": "Batman",
+          "team": "Liga de la Justicia",
+          "esHeroe": true,
+          "vida": 200,
+          "vidaMaxima": 200,
+          "activo": true,
+          "orden": 0,
+          "idUnico": "H3"
+        }
+      ],
+      "nombreEquipo": "Equipo de Héroes",
+      "esHeroe": true,
+      "personajeActual": 0,
+      "ganador": false
+    },
+    "equipoVillanos": {
+      "personajes": [
+        {
+          "id": 1,
+          "name": "Lex Luthor",
+          "alias": "Lex Luthor",
+          "team": "Ninguno",
+          "esHeroe": false,
+          "vida": 65,
+          "vidaMaxima": 200,
+          "activo": true,
+          "orden": 0,
+          "idUnico": "V1"
+        },
+        {
+          "id": 2,
+          "name": "Thanos",
+          "alias": "Thanos",
+          "team": "Ninguno",
+          "esHeroe": false,
+          "vida": 200,
+          "vidaMaxima": 200,
+          "activo": true,
+          "orden": 0,
+          "idUnico": "V2"
+        },
+        {
+          "id": 3,
+          "name": "Oswald Cobblepot",
+          "alias": "El Pingüino",
+          "team": "Ninguno",
+          "esHeroe": false,
+          "vida": 200,
+          "vidaMaxima": 200,
+          "activo": true,
+          "orden": 0,
+          "idUnico": "V3"
+        }
+      ],
+      "nombreEquipo": "Equipo de Villanos",
+      "esHeroe": false,
+      "personajeActual": 0,
+      "ganador": false
+    }
+  },
+  {
+    "id": "1752277851625",
+    "estado": "finalizada",
+    "ronda": 4,
+    "turno": "villanos",
+    "ganador": "empate",
+    "fecha": "2025-07-11T23:50:51.625Z",
+    "historial": [
+      {
+        "turno": "villanos",
+        "ronda": 1,
+        "tipo": "Batalla iniciada",
+        "descripcion": "Equipo villanos inicia la batalla",
+        "datos": {},
+        "timestamp": "2025-07-11T23:51:18.363Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 1,
+        "tipo": "ataque",
+        "descripcion": "Lex Luthor ataca a Superman con Golpe crítico",
+        "datos": {
+          "atacante": "Lex Luthor",
+          "objetivo": "Superman",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 200,
+          "vidaActual": 155,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-11T23:51:55.636Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 1,
+        "tipo": "cambio_turno",
+        "descripcion": "Turno de Héroes: Iron Man",
+        "datos": {},
+        "timestamp": "2025-07-11T23:51:55.638Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 1,
+        "tipo": "ataque",
+        "descripcion": "Superman ataca a Lex Luthor con Golpe crítico",
+        "datos": {
+          "atacante": "Superman",
+          "objetivo": "Lex Luthor",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 200,
+          "vidaActual": 155,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-11T23:52:11.542Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 2,
+        "tipo": "nueva_ronda",
+        "descripcion": "Inicia la ronda 2",
+        "datos": {},
+        "timestamp": "2025-07-11T23:52:11.544Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 2,
+        "tipo": "cambio_turno",
+        "descripcion": "Turno de Villanos: Thanos",
+        "datos": {},
+        "timestamp": "2025-07-11T23:52:11.544Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 2,
+        "tipo": "ataque",
+        "descripcion": "Lex Luthor ataca a Superman con Golpe crítico",
+        "datos": {
+          "atacante": "Lex Luthor",
+          "objetivo": "Superman",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 155,
+          "vidaActual": 110,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-11T23:52:23.931Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 2,
+        "tipo": "cambio_turno",
+        "descripcion": "Turno de Héroes: Batman",
+        "datos": {},
+        "timestamp": "2025-07-11T23:52:23.933Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 2,
+        "tipo": "ataque",
+        "descripcion": "Superman ataca a Lex Luthor con Golpe crítico",
+        "datos": {
+          "atacante": "Superman",
+          "objetivo": "Lex Luthor",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 155,
+          "vidaActual": 110,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-11T23:52:38.605Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 3,
+        "tipo": "nueva_ronda",
+        "descripcion": "Inicia la ronda 3",
+        "datos": {},
+        "timestamp": "2025-07-11T23:52:38.606Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 3,
+        "tipo": "cambio_turno",
+        "descripcion": "Turno de Villanos: El Pingüino",
+        "datos": {},
+        "timestamp": "2025-07-11T23:52:38.606Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 3,
+        "tipo": "ataque",
+        "descripcion": "Lex Luthor ataca a Superman con Golpe crítico",
+        "datos": {
+          "atacante": "Lex Luthor",
+          "objetivo": "Superman",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 110,
+          "vidaActual": 65,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-11T23:52:55.788Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 3,
+        "tipo": "cambio_turno",
+        "descripcion": "Turno de Héroes: Superman",
+        "datos": {},
+        "timestamp": "2025-07-11T23:52:55.789Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 3,
+        "tipo": "ataque",
+        "descripcion": "Superman ataca a Lex Luthor con Golpe crítico",
+        "datos": {
+          "atacante": "Superman",
+          "objetivo": "Lex Luthor",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 110,
+          "vidaActual": 65,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-11T23:54:47.651Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 4,
+        "tipo": "batalla_finalizada",
+        "descripcion": "Batalla finalizada. Ganador: empate",
+        "datos": {},
+        "timestamp": "2025-07-11T23:54:47.652Z"
+      }
+    ],
+    "equipoHeroes": {
+      "personajes": [
+        {
+          "id": 1,
+          "name": "Clark Kent",
+          "alias": "Superman",
+          "team": "Liga de la Justicia",
+          "esHeroe": true,
+          "vida": 65,
+          "vidaMaxima": 200,
+          "activo": true,
+          "orden": 0,
+          "idUnico": "H1"
+        },
+        {
+          "id": 2,
+          "name": "Tony Stark",
+          "alias": "Iron Man",
+          "team": "Los Vengadores",
+          "esHeroe": true,
+          "vida": 200,
+          "vidaMaxima": 200,
+          "activo": true,
+          "orden": 0,
+          "idUnico": "H2"
+        },
+        {
+          "id": 3,
+          "name": "Bruce Wayne",
+          "alias": "Batman",
+          "team": "Liga de la Justicia",
+          "esHeroe": true,
+          "vida": 200,
+          "vidaMaxima": 200,
+          "activo": true,
+          "orden": 0,
+          "idUnico": "H3"
+        }
+      ],
+      "nombreEquipo": "Equipo de Héroes",
+      "esHeroe": true,
+      "personajeActual": 0,
+      "ganador": false
+    },
+    "equipoVillanos": {
+      "personajes": [
+        {
+          "id": 1,
+          "name": "Lex Luthor",
+          "alias": "Lex Luthor",
+          "team": "Ninguno",
+          "esHeroe": false,
+          "vida": 65,
+          "vidaMaxima": 200,
+          "activo": true,
+          "orden": 0,
+          "idUnico": "V1"
+        },
+        {
+          "id": 2,
+          "name": "Thanos",
+          "alias": "Thanos",
+          "team": "Ninguno",
+          "esHeroe": false,
+          "vida": 200,
+          "vidaMaxima": 200,
+          "activo": true,
+          "orden": 0,
+          "idUnico": "V2"
+        },
+        {
+          "id": 3,
+          "name": "Oswald Cobblepot",
+          "alias": "El Pingüino",
+          "team": "Ninguno",
+          "esHeroe": false,
+          "vida": 200,
+          "vidaMaxima": 200,
+          "activo": true,
+          "orden": 0,
+          "idUnico": "V3"
+        }
+      ],
+      "nombreEquipo": "Equipo de Villanos",
+      "esHeroe": false,
+      "personajeActual": 0,
+      "ganador": false
+    }
+  },
+  {
+    "id": "1752279002294",
+    "estado": "finalizada",
+    "ronda": 4,
+    "turno": "villanos",
+    "ganador": "heroes",
+    "fecha": "2025-07-12T00:10:02.294Z",
+    "historial": [
+      {
+        "turno": "heroes",
+        "ronda": 1,
+        "tipo": "Batalla iniciada",
+        "descripcion": "Equipo heroes inicia la batalla",
+        "datos": {},
+        "timestamp": "2025-07-12T00:10:18.997Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 1,
+        "tipo": "ataque",
+        "descripcion": "Superman ataca a Lex Luthor con Golpe crítico",
+        "datos": {
+          "atacante": "Superman",
+          "objetivo": "Lex Luthor",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 200,
+          "vidaActual": 155,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-12T00:11:08.738Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 1,
+        "tipo": "cambio_turno",
+        "descripcion": "Turno de Villanos: Thanos",
+        "datos": {},
+        "timestamp": "2025-07-12T00:11:08.740Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 1,
+        "tipo": "ataque",
+        "descripcion": "Lex Luthor ataca a Superman con Golpe crítico",
+        "datos": {
+          "atacante": "Lex Luthor",
+          "objetivo": "Superman",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 200,
+          "vidaActual": 155,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-12T00:11:24.525Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 1,
+        "tipo": "cambio_turno",
+        "descripcion": "Turno de Héroes: Iron Man",
+        "datos": {},
+        "timestamp": "2025-07-12T00:11:24.527Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 1,
+        "tipo": "ataque",
+        "descripcion": "Superman ataca a Lex Luthor con Golpe crítico",
+        "datos": {
+          "atacante": "Superman",
+          "objetivo": "Lex Luthor",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 155,
+          "vidaActual": 110,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-12T00:11:47.408Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 1,
+        "tipo": "cambio_turno",
+        "descripcion": "Turno de Villanos: El Pingüino",
+        "datos": {},
+        "timestamp": "2025-07-12T00:11:47.409Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 1,
+        "tipo": "ataque",
+        "descripcion": "Lex Luthor ataca a Superman con Golpe crítico",
+        "datos": {
+          "atacante": "Lex Luthor",
+          "objetivo": "Superman",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 155,
+          "vidaActual": 110,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-12T00:12:02.219Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 1,
+        "tipo": "cambio_turno",
+        "descripcion": "Turno de Héroes: Batman",
+        "datos": {},
+        "timestamp": "2025-07-12T00:12:02.221Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 1,
+        "tipo": "ataque",
+        "descripcion": "Superman ataca a Lex Luthor con Golpe crítico",
+        "datos": {
+          "atacante": "Superman",
+          "objetivo": "Lex Luthor",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 110,
+          "vidaActual": 65,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-12T00:12:15.561Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 1,
+        "tipo": "cambio_turno",
+        "descripcion": "Turno de Villanos: Lex Luthor",
+        "datos": {},
+        "timestamp": "2025-07-12T00:12:15.562Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 1,
+        "tipo": "ataque",
+        "descripcion": "Lex Luthor ataca a Superman con Golpe crítico",
+        "datos": {
+          "atacante": "Lex Luthor",
+          "objetivo": "Superman",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 110,
+          "vidaActual": 65,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-12T00:12:31.196Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 1,
+        "tipo": "cambio_turno",
+        "descripcion": "Turno de Héroes: Superman",
+        "datos": {},
+        "timestamp": "2025-07-12T00:12:31.197Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 1,
+        "tipo": "ataque",
+        "descripcion": "Superman ataca a Lex Luthor con Golpe crítico",
+        "datos": {
+          "atacante": "Superman",
+          "objetivo": "Lex Luthor",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 65,
+          "vidaActual": 20,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-12T00:12:48.524Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 1,
+        "tipo": "cambio_turno",
+        "descripcion": "Turno de Villanos: Thanos",
+        "datos": {},
+        "timestamp": "2025-07-12T00:12:48.525Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 1,
+        "tipo": "ataque",
+        "descripcion": "Lex Luthor ataca a Superman con Golpe crítico",
+        "datos": {
+          "atacante": "Lex Luthor",
+          "objetivo": "Superman",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 65,
+          "vidaActual": 20,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-12T00:13:03.198Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 1,
+        "tipo": "cambio_turno",
+        "descripcion": "Turno de Héroes: Iron Man",
+        "datos": {},
+        "timestamp": "2025-07-12T00:13:03.200Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 1,
+        "tipo": "ataque",
+        "descripcion": "Superman ataca a Lex Luthor con Golpe crítico",
+        "datos": {
+          "atacante": "Superman",
+          "objetivo": "Lex Luthor",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 20,
+          "vidaActual": 0,
+          "objetivoEliminado": true
+        },
+        "timestamp": "2025-07-12T00:13:22.611Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 1,
+        "tipo": "eliminacion",
+        "descripcion": "Lex Luthor ha sido eliminado",
+        "datos": {},
+        "timestamp": "2025-07-12T00:13:22.611Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 2,
+        "tipo": "nueva_ronda",
+        "descripcion": "Inicia la ronda 2 - Lex Luthor eliminado",
+        "datos": {},
+        "timestamp": "2025-07-12T00:13:22.611Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 2,
+        "tipo": "cambio_turno",
+        "descripcion": "Turno de Villanos: El Pingüino",
+        "datos": {},
+        "timestamp": "2025-07-12T00:13:22.614Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 2,
+        "tipo": "ataque",
+        "descripcion": "El Pingüino ataca a Superman con Golpe crítico",
+        "datos": {
+          "atacante": "El Pingüino",
+          "objetivo": "Superman",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 20,
+          "vidaActual": 0,
+          "objetivoEliminado": true
+        },
+        "timestamp": "2025-07-12T00:14:38.367Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 2,
+        "tipo": "eliminacion",
+        "descripcion": "Superman ha sido eliminado",
+        "datos": {},
+        "timestamp": "2025-07-12T00:14:38.367Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 3,
+        "tipo": "nueva_ronda",
+        "descripcion": "Inicia la ronda 3 - Superman eliminado",
+        "datos": {},
+        "timestamp": "2025-07-12T00:14:38.367Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 3,
+        "tipo": "cambio_turno",
+        "descripcion": "Turno de Héroes: Batman",
+        "datos": {},
+        "timestamp": "2025-07-12T00:14:38.369Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 3,
+        "tipo": "ataque",
+        "descripcion": "Batman ataca a El Pingüino con Golpe crítico",
+        "datos": {
+          "atacante": "Batman",
+          "objetivo": "El Pingüino",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 200,
+          "vidaActual": 155,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-12T00:15:52.673Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 3,
+        "tipo": "cambio_turno",
+        "descripcion": "Turno de Villanos: Thanos",
+        "datos": {},
+        "timestamp": "2025-07-12T00:15:52.675Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 3,
+        "tipo": "ataque",
+        "descripcion": "El Pingüino ataca a Batman con Golpe crítico",
+        "datos": {
+          "atacante": "El Pingüino",
+          "objetivo": "Batman",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 200,
+          "vidaActual": 155,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-12T00:17:02.721Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 3,
+        "tipo": "cambio_turno",
+        "descripcion": "Turno de Héroes: Iron Man",
+        "datos": {},
+        "timestamp": "2025-07-12T00:17:02.722Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 3,
+        "tipo": "ataque",
+        "descripcion": "Batman ataca a El Pingüino con Golpe crítico",
+        "datos": {
+          "atacante": "Batman",
+          "objetivo": "El Pingüino",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 155,
+          "vidaActual": 110,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-12T00:17:25.211Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 3,
+        "tipo": "cambio_turno",
+        "descripcion": "Turno de Villanos: El Pingüino",
+        "datos": {},
+        "timestamp": "2025-07-12T00:17:25.212Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 3,
+        "tipo": "ataque",
+        "descripcion": "El Pingüino ataca a Batman con Golpe crítico",
+        "datos": {
+          "atacante": "El Pingüino",
+          "objetivo": "Batman",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 155,
+          "vidaActual": 110,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-12T00:17:40.565Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 3,
+        "tipo": "cambio_turno",
+        "descripcion": "Turno de Héroes: Batman",
+        "datos": {},
+        "timestamp": "2025-07-12T00:17:40.567Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 3,
+        "tipo": "ataque",
+        "descripcion": "Batman ataca a El Pingüino con Golpe crítico",
+        "datos": {
+          "atacante": "Batman",
+          "objetivo": "El Pingüino",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 110,
+          "vidaActual": 65,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-12T00:17:59.970Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 3,
+        "tipo": "cambio_turno",
+        "descripcion": "Turno de Villanos: Thanos",
+        "datos": {},
+        "timestamp": "2025-07-12T00:17:59.972Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 3,
+        "tipo": "ataque",
+        "descripcion": "El Pingüino ataca a Batman con Golpe crítico",
+        "datos": {
+          "atacante": "El Pingüino",
+          "objetivo": "Batman",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 110,
+          "vidaActual": 65,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-12T00:18:25.967Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 3,
+        "tipo": "cambio_turno",
+        "descripcion": "Turno de Héroes: Iron Man",
+        "datos": {},
+        "timestamp": "2025-07-12T00:18:25.968Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 3,
+        "tipo": "ataque",
+        "descripcion": "Batman ataca a El Pingüino con Golpe crítico",
+        "datos": {
+          "atacante": "Batman",
+          "objetivo": "El Pingüino",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 65,
+          "vidaActual": 20,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-12T00:18:37.582Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 3,
+        "tipo": "cambio_turno",
+        "descripcion": "Turno de Villanos: El Pingüino",
+        "datos": {},
+        "timestamp": "2025-07-12T00:18:37.584Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 3,
+        "tipo": "ataque",
+        "descripcion": "El Pingüino ataca a Batman con Golpe crítico",
+        "datos": {
+          "atacante": "El Pingüino",
+          "objetivo": "Batman",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 65,
+          "vidaActual": 20,
+          "objetivoEliminado": false
+        },
+        "timestamp": "2025-07-12T00:18:51.113Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 3,
+        "tipo": "cambio_turno",
+        "descripcion": "Turno de Héroes: Batman",
+        "datos": {},
+        "timestamp": "2025-07-12T00:18:51.114Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 3,
+        "tipo": "ataque",
+        "descripcion": "Batman ataca a El Pingüino con Golpe crítico",
+        "datos": {
+          "atacante": "Batman",
+          "objetivo": "El Pingüino",
+          "tipoAtaque": "critico",
+          "dano": 45,
+          "vidaAnterior": 20,
+          "vidaActual": 0,
+          "objetivoEliminado": true
+        },
+        "timestamp": "2025-07-12T00:19:16.290Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 3,
+        "tipo": "eliminacion",
+        "descripcion": "El Pingüino ha sido eliminado",
+        "datos": {},
+        "timestamp": "2025-07-12T00:19:16.290Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 4,
+        "tipo": "nueva_ronda",
+        "descripcion": "Inicia la ronda 4 - El Pingüino eliminado",
+        "datos": {},
+        "timestamp": "2025-07-12T00:19:16.291Z"
+      },
+      {
+        "turno": "heroes",
+        "ronda": 4,
+        "tipo": "batalla_finalizada",
+        "descripcion": "Batalla finalizada. Ganador: heroes",
+        "datos": {},
+        "timestamp": "2025-07-12T00:19:16.292Z"
+      },
+      {
+        "turno": "villanos",
+        "ronda": 4,
+        "tipo": "cambio_turno",
+        "descripcion": "Turno de Villanos: Thanos",
+        "datos": {},
+        "timestamp": "2025-07-12T00:19:16.293Z"
+      }
+    ],
+    "equipoHeroes": {
+      "personajes": [
+        {
+          "id": 1,
+          "name": "Clark Kent",
+          "alias": "Superman",
+          "team": "Liga de la Justicia",
+          "esHeroe": true,
+          "vida": 0,
+          "vidaMaxima": 200,
+          "activo": false,
+          "orden": 0,
+          "idUnico": "H1"
+        },
+        {
+          "id": 2,
+          "name": "Tony Stark",
+          "alias": "Iron Man",
+          "team": "Los Vengadores",
+          "esHeroe": true,
+          "vida": 200,
+          "vidaMaxima": 200,
+          "activo": true,
+          "orden": 0,
+          "idUnico": "H2"
+        },
+        {
+          "id": 3,
+          "name": "Bruce Wayne",
+          "alias": "Batman",
+          "team": "Liga de la Justicia",
+          "esHeroe": true,
+          "vida": 20,
+          "vidaMaxima": 200,
+          "activo": true,
+          "orden": 0,
+          "idUnico": "H3"
+        }
+      ],
+      "nombreEquipo": "Equipo de Héroes",
+      "esHeroe": true,
+      "personajeActual": 2,
+      "ganador": false
+    },
+    "equipoVillanos": {
+      "personajes": [
+        {
+          "id": 1,
+          "name": "Lex Luthor",
+          "alias": "Lex Luthor",
+          "team": "Ninguno",
+          "esHeroe": false,
+          "vida": 0,
+          "vidaMaxima": 200,
+          "activo": false,
+          "orden": 0,
+          "idUnico": "V1"
+        },
+        {
+          "id": 2,
+          "name": "Thanos",
+          "alias": "Thanos",
+          "team": "Ninguno",
+          "esHeroe": false,
+          "vida": 200,
+          "vidaMaxima": 200,
+          "activo": true,
+          "orden": 0,
+          "idUnico": "V2"
+        },
+        {
+          "id": 3,
+          "name": "Oswald Cobblepot",
+          "alias": "El Pingüino",
+          "team": "Ninguno",
+          "esHeroe": false,
+          "vida": 0,
+          "vidaMaxima": 200,
+          "activo": false,
+          "orden": 0,
+          "idUnico": "V3"
+        }
+      ],
+      "nombreEquipo": "Equipo de Villanos",
+      "esHeroe": false,
+      "personajeActual": 1,
+      "ganador": false
+    }
+  }
+]

@@ -1,35 +1,66 @@
-import fs from 'fs-extra'
-import Hero from '../models/heroModel.js'
-
-const filePath = './data/superheroes.json' // Verificar la ruta que tu configuraste en tu proyecto.
+import Hero from '../models/heroModel.js';
 
 async function getHeroes() {
     try {
-        const data = await fs.readJson(filePath)
-        return data.map(hero => new Hero(
-            hero.id, hero.name, hero.alias, hero.city, hero.team
-        ))
+        return await Hero.find();
     } catch (error) {
-        console.error(error)
+        console.error('Error al obtener héroes:', error);
+        throw error;
     }
-
 }
 
 async function saveHeroes(heroes) {
     try {
-        await fs.writeJson(filePath, heroes)
+        // Este método es para compatibilidad, pero en MongoDB creamos/actualizamos individualmente
+        return await Hero.insertMany(heroes);
     } catch (error) {
-        console.error(error)
+        console.error('Error al guardar héroes:', error);
+        throw error;
     }
 }
 
 async function getHeroeById(id) {
-    const heroes = await getHeroes();
-    return heroes.find(h => h.id === parseInt(id));
+    try {
+        return await Hero.findById(id);
+    } catch (error) {
+        console.error('Error al obtener héroe por ID:', error);
+        throw error;
+    }
+}
+
+async function createHeroe(heroData) {
+    try {
+        const hero = new Hero(heroData);
+        return await hero.save();
+    } catch (error) {
+        console.error('Error al crear héroe:', error);
+        throw error;
+    }
+}
+
+async function updateHeroe(id, updates) {
+    try {
+        return await Hero.findByIdAndUpdate(id, updates, { new: true });
+    } catch (error) {
+        console.error('Error al actualizar héroe:', error);
+        throw error;
+    }
+}
+
+async function deleteHeroe(id) {
+    try {
+        return await Hero.findByIdAndDelete(id);
+    } catch (error) {
+        console.error('Error al eliminar héroe:', error);
+        throw error;
+    }
 }
 
 export default {
     getHeroes,
     saveHeroes,
-    getHeroeById
-}
+    getHeroeById,
+    createHeroe,
+    updateHeroe,
+    deleteHeroe
+};

@@ -19,21 +19,32 @@ export class PersonajeBatalla {
     }
 
     recibirDano(dano) {
-        // Llenar barras por daño recibido
-        this.powerBar += dano;
-        if (this.powerBar > 100) this.powerBar = 100;
-        this.defenseBar += dano;
-        if (this.defenseBar > 100) this.defenseBar = 100;
-        // Aplicar super defensa si está pendiente
+        // Solo los personajes vivos pueden acumular barras de poder y defensa
+        if (this.vida > 0) {
+            this.powerBar += dano;
+            if (this.powerBar > 100) this.powerBar = 100;
+            this.defenseBar += dano;
+            if (this.defenseBar > 100) this.defenseBar = 100;
+        }
+        
+        // Aplicar super defensa si está pendiente y el personaje está vivo
         let danoFinal = dano;
-        if (this.superDefensaPendiente) {
+        if (this.superDefensaPendiente && this.vida > 0) {
             danoFinal = Math.ceil(dano / 2);
             this.superDefensaPendiente = false;
         }
+        
         this.vida = Math.max(0, this.vida - danoFinal);
+        
+        // Si el personaje muere, limpiar sus barras y estados especiales
         if (this.vida <= 0) {
             this.activo = false;
+            this.powerBar = 0;
+            this.defenseBar = 0;
+            this.superAtaquePendiente = false;
+            this.superDefensaPendiente = false;
         }
+        
         return this.vida;
     }
 
@@ -185,6 +196,16 @@ export class BatallaEquipo {
     }
 
     atacar(atacante, objetivo, tipoAtaque) {
+        // Validar que el objetivo esté vivo antes de atacar
+        if (!objetivo.estaVivo()) {
+            throw new Error(`No se puede atacar a ${objetivo.alias} porque ya está eliminado`);
+        }
+        
+        // Validar que el atacante esté vivo
+        if (!atacante.estaVivo()) {
+            throw new Error(`${atacante.alias} no puede atacar porque está eliminado`);
+        }
+        
         let dano = 0;
         let descripcion = '';
 
