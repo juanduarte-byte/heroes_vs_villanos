@@ -15,11 +15,13 @@ import {
     activarSuperDefensa,
     usarHabilidad
 } from '../services/batallaService.js';
+import { authenticateToken } from '../middleware/auth.js';
+import { verifyBattleOwnership, verifyActiveBattleOwnership } from '../middleware/battleOwnership.js';
 
 const router = express.Router();
 
 // Activar superataque
-router.post('/:batallaId/activar-superataque', async (req, res) => {
+router.post('/:batallaId/activar-superataque', authenticateToken, verifyActiveBattleOwnership, async (req, res) => {
     try {
         const { batallaId } = req.params;
         const { personajeId } = req.body;
@@ -38,7 +40,7 @@ router.post('/:batallaId/activar-superataque', async (req, res) => {
 });
 
 // Activar superdefensa
-router.post('/:batallaId/activar-superdefensa', async (req, res) => {
+router.post('/:batallaId/activar-superdefensa', authenticateToken, verifyActiveBattleOwnership, async (req, res) => {
     try {
         const { batallaId } = req.params;
         const { personajeId } = req.body;
@@ -57,7 +59,7 @@ router.post('/:batallaId/activar-superdefensa', async (req, res) => {
 });
 
 // Usar habilidad especial
-router.post('/:batallaId/usar-habilidad', async (req, res) => {
+router.post('/:batallaId/usar-habilidad', authenticateToken, verifyActiveBattleOwnership, async (req, res) => {
     try {
         const { batallaId } = req.params;
         const { personajeId, objetivoId } = req.body;
@@ -85,9 +87,10 @@ router.post('/:batallaId/usar-habilidad', async (req, res) => {
 });
 
 // Crear una nueva batalla
-router.post('/crear', async (req, res) => {
+router.post('/crear', authenticateToken, async (req, res) => {
     try {
         const { equipoHeroes, equipoVillanos, iniciador = 'heroes', primerHeroe = null, primerVillano = null } = req.body;
+        const userId = req.user.id;
         
         if (!equipoHeroes || !equipoVillanos) {
             return res.status(400).json({
@@ -96,7 +99,7 @@ router.post('/crear', async (req, res) => {
             });
         }
 
-        const resultado = await crearBatalla(equipoHeroes, equipoVillanos, iniciador, primerHeroe, primerVillano);
+        const resultado = await crearBatalla(equipoHeroes, equipoVillanos, iniciador, primerHeroe, primerVillano, userId);
         
         if (resultado.success) {
             res.status(201).json(resultado);
@@ -112,7 +115,7 @@ router.post('/crear', async (req, res) => {
 });
 
 // Iniciar una batalla
-router.post('/:batallaId/iniciar', async (req, res) => {
+router.post('/:batallaId/iniciar', authenticateToken, verifyBattleOwnership, async (req, res) => {
     try {
         const { batallaId } = req.params;
         const resultado = await iniciarBatalla(batallaId);
@@ -131,7 +134,7 @@ router.post('/:batallaId/iniciar', async (req, res) => {
 });
 
 // Realizar un ataque en una batalla
-router.post('/:batallaId/atacar', async (req, res) => {
+router.post('/:batallaId/atacar', authenticateToken, verifyActiveBattleOwnership, async (req, res) => {
     try {
         const { batallaId } = req.params;
         const { atacanteId, objetivoId, tipoAtaque } = req.body;
@@ -159,7 +162,7 @@ router.post('/:batallaId/atacar', async (req, res) => {
 });
 
 // Obtener información detallada de una batalla (incluye IDs únicos)
-router.get('/:batallaId/info', async (req, res) => {
+router.get('/:batallaId/info', authenticateToken, verifyBattleOwnership, async (req, res) => {
     try {
         const { batallaId } = req.params;
         const resultado = await obtenerInfoBatalla(batallaId);
@@ -178,7 +181,7 @@ router.get('/:batallaId/info', async (req, res) => {
 });
 
 // Obtener estado de una batalla
-router.get('/:batallaId/estado', async (req, res) => {
+router.get('/:batallaId/estado', authenticateToken, verifyBattleOwnership, async (req, res) => {
     try {
         const { batallaId } = req.params;
         const resultado = await obtenerEstadoBatalla(batallaId);
@@ -197,9 +200,10 @@ router.get('/:batallaId/estado', async (req, res) => {
 });
 
 // Obtener batallas activas
-router.get('/activas', async (req, res) => {
+router.get('/activas', authenticateToken, async (req, res) => {
     try {
-        const resultado = await obtenerBatallasActivas();
+        const userId = req.user.id;
+        const resultado = await obtenerBatallasActivas(userId);
         res.json(resultado);
     } catch (error) {
         res.status(500).json({
@@ -210,9 +214,10 @@ router.get('/activas', async (req, res) => {
 });
 
 // Obtener historial de batallas
-router.get('/historial', async (req, res) => {
+router.get('/historial', authenticateToken, async (req, res) => {
     try {
-        const resultado = await obtenerHistorialBatallas();
+        const userId = req.user.id;
+        const resultado = await obtenerHistorialBatallas(userId);
         res.json(resultado);
     } catch (error) {
         res.status(500).json({

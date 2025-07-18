@@ -60,6 +60,9 @@ import villanoRepository from '../repositories/villanoRepository.js';
 // Almacenamiento en memoria para batallas activas
 const batallasActivas = new Map();
 
+// Exportar para uso en middlewares
+export { batallasActivas };
+
 // Función para crear ID único que combine tipo y ID numérico
 function crearIdUnico(tipo, idNumerico) {
     return `${tipo}${idNumerico}`;
@@ -72,8 +75,13 @@ function parsearIdUnico(idUnico) {
     return { tipo, idNumerico };
 }
 
-export async function crearBatalla(equipoHeroes, equipoVillanos, iniciador = 'heroes', primerHeroe = null, primerVillano = null) {
+export async function crearBatalla(equipoHeroes, equipoVillanos, iniciador = 'heroes', primerHeroe = null, primerVillano = null, userId) {
     try {
+        // Validar que se proporcione userId
+        if (!userId) {
+            throw new Error('Se requiere autenticación para crear batallas');
+        }
+
         // Validar que tenemos exactamente 3 héroes y 3 villanos
         if (!equipoHeroes || equipoHeroes.length !== 3) {
             throw new Error('Se requieren exactamente 3 héroes para la batalla');
@@ -122,6 +130,9 @@ export async function crearBatalla(equipoHeroes, equipoVillanos, iniciador = 'he
 
         // Crear batalla con personajes iniciales
         const batalla = new BatallaEquipo(equipoHeroesBatalla, equipoVillanosBatalla, iniciador, primerHeroe, primerVillano);
+        
+        // Asignar el userId a la batalla
+        batalla.userId = userId;
         
         // Guardar en memoria para batallas activas
         batallasActivas.set(batalla.id, batalla);
@@ -368,9 +379,16 @@ export async function obtenerEstadoBatalla(batallaId) {
     }
 }
 
-export async function obtenerBatallasActivas() {
+export async function obtenerBatallasActivas(userId = null) {
     try {
-        const batallas = Array.from(batallasActivas.values()).map(batalla => ({
+        let batallasArray = Array.from(batallasActivas.values());
+        
+        // Filtrar por usuario si se proporciona userId
+        if (userId) {
+            batallasArray = batallasArray.filter(batalla => batalla.userId === userId);
+        }
+        
+        const batallas = batallasArray.map(batalla => ({
             id: batalla.id,
             estado: batalla.estado,
             ronda: batalla.ronda,
@@ -415,13 +433,22 @@ export async function obtenerBatallasActivas() {
     }
 }
 
-export async function obtenerHistorialBatallas() {
+export async function obtenerHistorialBatallas(userId = null) {
     try {
         const batallas = await obtenerTodasLasBatallas();
+        
+        // Filtrar por usuario si se proporciona userId
+        let batallasFiltered = batallas;
+        if (userId) {
+            batallasFiltered = batallas.filter(batalla => 
+                batalla.userId && batalla.userId.toString() === userId
+            );
+        }
+        
         return {
             success: true,
-            batallas,
-            total: batallas.length,
+            batallas: batallasFiltered,
+            total: batallasFiltered.length,
             mensaje: 'Historial de batallas obtenido'
         };
     } catch (error) {

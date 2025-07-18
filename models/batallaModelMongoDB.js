@@ -39,6 +39,12 @@ const eventoHistorialSchema = new mongoose.Schema({
 
 // Esquema principal de batalla
 const batallaSchema = new mongoose.Schema({
+    userId: { 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'User', 
+        required: true,
+        index: true
+    },
     equipoHeroes: { type: equipoBatallaSchema, required: true },
     equipoVillanos: { type: equipoBatallaSchema, required: true },
     iniciador: { type: String, enum: ['heroes', 'villanos'], required: true },
@@ -66,6 +72,8 @@ const batallaSchema = new mongoose.Schema({
 });
 
 // Índices para optimizar consultas
+batallaSchema.index({ userId: 1, estado: 1 });
+batallaSchema.index({ userId: 1, fecha: -1 });
 batallaSchema.index({ estado: 1 });
 batallaSchema.index({ ganador: 1 });
 batallaSchema.index({ fecha: -1 });

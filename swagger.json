@@ -2,13 +2,14 @@
   "openapi": "3.0.0",
   "info": {
     "title": "API Superhéroes - Sistema de Batallas por Equipos",
-    "version": "3.0.0",
-    "description": "API para gestión de superhéroes, villanos y batallas por equipos con persistencia en MongoDB Atlas. Incluye sistema de turnos, IDs únicos, barras de poder/defensa, y validaciones mejoradas para batallas estratégicas."
+    "version": "4.0.0",
+    "description": "API para gestión de superhéroes, villanos y batallas por equipos con persistencia en MongoDB Atlas. **Nueva versión con autenticación JWT**: cada usuario tiene sus propias batallas privadas. Los endpoints de batalla requieren autenticación con token Bearer. Incluye sistema de turnos, IDs únicos, barras de poder/defensa, y validaciones mejoradas para batallas estratégicas."
   },
   "tags": [
+    { "name": "Autenticación", "description": "Registro, login y gestión de usuarios con JWT" },
     { "name": "Heroes", "description": "Operaciones CRUD de héroes con persistencia en MongoDB" },
     { "name": "Villanos", "description": "Operaciones CRUD de villanos con persistencia en MongoDB" },
-    { "name": "Batallas", "description": "Sistema de batallas por equipos con turnos, almacenadas en MongoDB" },
+    { "name": "Batallas", "description": "Sistema de batallas por equipos con turnos, privadas por usuario" },
     { "name": "Enfrentamientos", "description": "Historial de enfrentamientos individuales guardados en MongoDB" }
   ],
   "servers": [
@@ -18,12 +19,167 @@
     }
   ],
   "paths": {
+    "/api/auth/register": {
+      "post": {
+        "tags": ["Autenticación"],
+        "summary": "Registrar nuevo usuario",
+        "description": "Crea una nueva cuenta de usuario con email y contraseña",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": { "type": "string", "example": "usuario1" },
+                  "email": { "type": "string", "format": "email", "example": "usuario@email.com" },
+                  "password": { "type": "string", "minLength": 6, "example": "password123" }
+                },
+                "required": ["username", "email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Usuario registrado exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "string" },
+                        "username": { "type": "string" },
+                        "email": { "type": "string" }
+                      }
+                    },
+                    "token": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Error de validación o usuario ya existe" }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": ["Autenticación"],
+        "summary": "Iniciar sesión",
+        "description": "Autentica un usuario y devuelve un token JWT",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string", "format": "email", "example": "usuario@email.com" },
+                  "password": { "type": "string", "example": "password123" }
+                },
+                "required": ["email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login exitoso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "string" },
+                        "username": { "type": "string" },
+                        "email": { "type": "string" }
+                      }
+                    },
+                    "token": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Credenciales inválidas" }
+        }
+      }
+    },
+    "/api/auth/profile": {
+      "get": {
+        "tags": ["Autenticación"],
+        "summary": "Obtener perfil del usuario autenticado",
+        "description": "Devuelve la información del usuario autenticado",
+        "security": [{"bearerAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Perfil del usuario",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "string" },
+                        "username": { "type": "string" },
+                        "email": { "type": "string" },
+                        "createdAt": { "type": "string", "format": "date-time" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Token no válido o expirado" }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "tags": ["Autenticación"],
+        "summary": "Cerrar sesión",
+        "description": "Cierra la sesión del usuario (solo confirmación, el token expira naturalmente)",
+        "security": [{"bearerAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Logout exitoso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
 
     "/api/batallas/{batallaId}/activar-superataque": {
       "post": {
         "tags": ["Batallas"],
         "summary": "Activar superataque para un personaje",
-        "description": "Activa el superataque de un personaje si su barra de poder está llena (100). El siguiente ataque de este personaje hará el doble de daño.",
+        "description": "Activa el superataque de un personaje si su barra de poder está llena (100). El siguiente ataque de este personaje hará el doble de daño. **Requiere autenticación y ser dueño de la batalla.**",
+        "security": [{"bearerAuth": []}],
         "parameters": [
           { "name": "batallaId", "in": "path", "required": true, "schema": { "type": "string" } }
         ],
@@ -292,7 +448,8 @@
       "post": {
         "tags": ["Batallas"],
         "summary": "Crear una nueva batalla por equipos",
-        "description": "Crea una batalla entre 3 héroes y 3 villanos con sistema de turnos, IDs únicos y persistencia en MongoDB. Incluye validaciones mejoradas y mecánicas de barras de poder/defensa.",
+        "description": "Crea una batalla entre 3 héroes y 3 villanos con sistema de turnos, IDs únicos y persistencia en MongoDB. **Requiere autenticación** - la batalla será privada para el usuario autenticado. Incluye validaciones mejoradas y mecánicas de barras de poder/defensa.",
+        "security": [{"bearerAuth": []}],
         "requestBody": {
           "required": true,
           "content": {
@@ -560,8 +717,9 @@
     "/api/batallas/activas": {
       "get": {
         "tags": ["Batallas"],
-        "summary": "Obtener batallas activas",
-        "description": "Lista todas las batallas que están en curso",
+        "summary": "Obtener batallas activas del usuario",
+        "description": "Lista todas las batallas que están en curso **del usuario autenticado**. Solo ve sus propias batallas.",
+        "security": [{"bearerAuth": []}],
         "responses": {
           "200": {
             "description": "Lista de batallas activas",
@@ -577,8 +735,9 @@
     "/api/batallas/historial": {
       "get": {
         "tags": ["Batallas"],
-        "summary": "Obtener historial de batallas",
-        "description": "Lista todas las batallas finalizadas",
+        "summary": "Obtener historial de batallas del usuario",
+        "description": "Lista todas las batallas finalizadas **del usuario autenticado**. Solo ve sus propias batallas.",
+        "security": [{"bearerAuth": []}],
         "responses": {
           "200": {
             "description": "Historial de batallas",
@@ -719,6 +878,14 @@
     }
   },
   "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Pega solo el token JWT (sin 'Bearer'). El sistema lo agregará automáticamente."
+      }
+    },
     "schemas": {
       "Hero": {
         "type": "object",
@@ -967,6 +1134,20 @@
         "properties": {
           "success": { "type": "boolean" },
           "error": { "type": "string" }
+        }
+      },
+      "AuthErrorResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": false },
+          "error": { "type": "string", "example": "Token no válido o expirado" }
+        }
+      },
+      "OwnershipErrorResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": false },
+          "error": { "type": "string", "example": "No tienes permiso para acceder a esta batalla" }
         }
       }
     }
