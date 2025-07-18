@@ -52,15 +52,33 @@ app.get('/', (req, res) => {
       autenticacion: [
         "POST /api/auth/register - Registrar nuevo usuario",
         "POST /api/auth/login - Iniciar sesión",
-        "GET /api/auth/profile - Obtener perfil (requiere token)"
+        "GET /api/auth/profile - Obtener perfil (requiere token)",
+        "PUT /api/auth/profile - Actualizar perfil (requiere token)",
+        "POST /api/auth/logout - Cerrar sesión (requiere token)"
       ],
       personajes: [
         "GET /api/heroes - Listar todos los héroes",
         "GET /api/villanos - Listar todos los villanos"
       ],
       batallas: [
-        "GET /api/batallas - Ver batallas del usuario autenticado",
-        "POST /api/batallas - Crear nueva batalla"
+        "POST /api/batallas/crear - Crear nueva batalla (requiere token)",
+        "POST /api/batallas/:id/iniciar - Iniciar batalla (requiere token)",
+        "POST /api/batallas/:id/atacar - Realizar ataque (requiere token)",
+        "POST /api/batallas/:id/activar-superataque - Activar superataque (requiere token)",
+        "POST /api/batallas/:id/activar-superdefensa - Activar superdefensa (requiere token)",
+        "POST /api/batallas/:id/usar-habilidad - Usar habilidad especial (requiere token)",
+        "GET /api/batallas/:id/info - Información de batalla (requiere token)",
+        "GET /api/batallas/:id/estado - Estado de batalla (requiere token)",
+        "GET /api/batallas/activas - Batallas activas del usuario (requiere token)",
+        "GET /api/batallas/historial - Historial de batallas (requiere token)",
+        "GET /api/batallas/estadisticas - Estadísticas generales",
+        "POST /api/batallas/simular - Simular batalla completa",
+        "POST /api/batallas/probar - Probar sistema de batallas"
+      ],
+      enfrentamientos: [
+        "GET /api/enfrentamientos - Listar enfrentamientos",
+        "POST /api/heroes/:id/enfrentar - Enfrentar desde héroe",
+        "POST /api/villanos/:id/enfrentar - Enfrentar desde villano"
       ]
     },
     documentacion: process.env.NODE_ENV !== 'production' ? 
