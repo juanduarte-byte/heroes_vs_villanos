@@ -68,12 +68,12 @@ const swaggerOptions = {
 // Solo mostrar Swagger en desarrollo
 if (process.env.NODE_ENV !== 'production') {
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, swaggerOptions));
-  console.log('📚 Swagger UI disponible en: http://localhost:3001/api-docs');
+  console.log(`📚 Swagger UI disponible en: http://localhost:${PORT}/api-docs`);
 } else {
   console.log('🔒 Swagger UI deshabilitado en producción');
 }
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 connectDB().then(() => {
   app.listen(PORT, () => {
     console.log(`Servidor corriendo en el puerto ${PORT}`);
