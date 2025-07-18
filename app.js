@@ -41,6 +41,36 @@ app.use((req, res, next) => {
 });
 
 app.use(express.json());
+
+// Ruta de bienvenida
+app.get('/', (req, res) => {
+  res.json({
+    message: "🦸‍♂️ API Heroes vs Villanos funcionando correctamente ⚔️",
+    version: "1.0.0",
+    status: "En línea",
+    endpoints: {
+      autenticacion: [
+        "POST /api/auth/register - Registrar nuevo usuario",
+        "POST /api/auth/login - Iniciar sesión",
+        "GET /api/auth/profile - Obtener perfil (requiere token)"
+      ],
+      personajes: [
+        "GET /api/heroes - Listar todos los héroes",
+        "GET /api/villanos - Listar todos los villanos"
+      ],
+      batallas: [
+        "GET /api/batallas - Ver batallas del usuario autenticado",
+        "POST /api/batallas - Crear nueva batalla"
+      ]
+    },
+    documentacion: process.env.NODE_ENV !== 'production' ? 
+      "Swagger UI disponible en /api-docs" : 
+      "Swagger UI deshabilitado en producción",
+    autor: "Juan Duarte",
+    repositorio: "https://github.com/juanduarte-byte/heroes_vs_villanos"
+  });
+});
+
 app.use('/api', heroController);
 app.use('/api', villanoController);
 app.use('/api', enfrentamientoController);
