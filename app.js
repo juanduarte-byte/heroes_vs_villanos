@@ -42,6 +42,17 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
+// Endpoint de salud (health check)
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: "healthy",
+    message: "API funcionando correctamente",
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
+
 // Ruta de bienvenida
 app.get('/', (req, res) => {
   res.json({
@@ -113,15 +124,15 @@ const swaggerOptions = {
   }
 };
 
-// Solo mostrar Swagger en desarrollo
-if (process.env.NODE_ENV !== 'production') {
+const PORT = process.env.PORT || 3001;
+
+// Solo mostrar Swagger en desarrollo (permitir en producción para testing)
+if (process.env.NODE_ENV !== 'production' || process.env.ENABLE_SWAGGER === 'true') {
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, swaggerOptions));
   console.log(`📚 Swagger UI disponible en: http://localhost:${PORT}/api-docs`);
 } else {
   console.log('🔒 Swagger UI deshabilitado en producción');
 }
-
-const PORT = process.env.PORT || 3001;
 connectDB().then(() => {
   app.listen(PORT, () => {
     console.log(`Servidor corriendo en el puerto ${PORT}`);
