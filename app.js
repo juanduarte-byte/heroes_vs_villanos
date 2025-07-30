@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
+import cors from 'cors';
 import heroController from './controllers/heroController.js';
 import villanoController from './controllers/villanoController.js';
 import enfrentamientoController from './controllers/enfrentamientoController.js';
@@ -10,7 +11,14 @@ import fs from 'fs';
 import { connectDB } from './config/db.js';
 
 const swaggerDocument = JSON.parse(fs.readFileSync('./swagger.json'));
+
 const app = express();
+
+// Configuración de CORS para permitir frontend local
+app.use(cors({
+  origin: ['http://127.0.0.1:5500', 'http://localhost:5500'],
+  credentials: true
+}));
 
 // Middleware de logging para monitorear peticiones
 app.use((req, res, next) => {
