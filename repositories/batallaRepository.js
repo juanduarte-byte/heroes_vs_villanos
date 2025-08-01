@@ -5,6 +5,17 @@ export async function guardarBatalla(batalla) {
     try {
         // Convertir clase a datos MongoDB
         const batallaData = batalla.toJSON();
+        // Validar y asignar userId e iniciador si faltan
+        if (!batallaData.userId && batalla.userId) {
+            batallaData.userId = batalla.userId;
+        }
+        if (!batallaData.iniciador && batalla.iniciador) {
+            batallaData.iniciador = batalla.iniciador;
+        }
+        // Log para depuración
+        if (!batallaData.userId || !batallaData.iniciador) {
+            console.warn('ADVERTENCIA: Batalla a guardar sin userId o iniciador', { userId: batallaData.userId, iniciador: batallaData.iniciador });
+        }
         const nuevaBatalla = new Batalla(batallaData);
         const batallaGuardada = await nuevaBatalla.save();
         return batallaGuardada;

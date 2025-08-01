@@ -363,7 +363,22 @@ export async function obtenerEstadoBatalla(batallaId) {
     try {
         const batalla = batallasActivas.get(batallaId);
         if (!batalla) {
-            throw new Error('Batalla no encontrada o ya finalizada');
+            // Buscar en MongoDB si la batalla ya finalizó
+            const { obtenerBatallaPorId } = await import('../repositories/batallaRepository.js');
+            const batallaFinalizada = await obtenerBatallaPorId(batallaId);
+            if (batallaFinalizada && batallaFinalizada.estado === 'finalizada') {
+                return {
+                    success: false,
+                    error: `La batalla ya finalizó. Ganador: ${batallaFinalizada.ganador ? batallaFinalizada.ganador : 'empate'}`,
+                    ganador: batallaFinalizada.ganador || null,
+                    estado: 'finalizada'
+                };
+            } else {
+                return {
+                    success: false,
+                    error: 'Batalla no encontrada o ya finalizada'
+                };
+            }
         }
 
         return {
