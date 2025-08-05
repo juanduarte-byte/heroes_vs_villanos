@@ -14,11 +14,44 @@ const swaggerDocument = JSON.parse(fs.readFileSync('./swagger.json'));
 
 const app = express();
 
-// Configuración de CORS para permitir frontend local
-app.use(cors({
-  origin: ['http://127.0.0.1:5500', 'http://localhost:5500'],
-  credentials: true
-}));
+// Configuración de CORS para permitir frontend local y desarrollo
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Permitir peticiones sin origin (como aplicaciones móviles, Postman, etc.)
+    if (!origin) return callback(null, true);
+    
+    // Lista de orígenes permitidos
+    const allowedOrigins = [
+      'http://127.0.0.1:5500', 
+      'http://localhost:5500',
+      'http://127.0.0.1:8080', 
+      'http://localhost:8080',
+      'http://127.0.0.1:3000', 
+      'http://localhost:3000',
+      'http://127.0.0.1:8000', 
+      'http://localhost:8000'
+    ];
+    
+    // En desarrollo, también permitir cualquier localhost
+    if (process.env.NODE_ENV !== 'production') {
+      if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
+        return callback(null, true);
+      }
+    }
+    
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.log(`🚫 CORS bloqueó origen: ${origin}`);
+      callback(new Error('No permitido por CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+};
+
+app.use(cors(corsOptions));
 
 // Middleware de logging para monitorear peticiones
 app.use((req, res, next) => {
